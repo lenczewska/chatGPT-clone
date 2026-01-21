@@ -1,34 +1,160 @@
- import React, { useState } from "react";
-import { useAppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
-import gpt_logo from "../../public/gpt_logo.png"
-import gpt_logo_white from "../../public/gpt_logo_white.png"
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  Home,
+  DollarSign,
+  Users,
+  Plus,
+  Image,
+  PanelLeft,
+  Search,
+} from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "../components/ui/sidebar";
+import gpt_logo from "../../public/gpt_logo.png";
+import gpt_logo_white from "../../public/gpt_logo_white.png";
 
-const SideBar = () => {
-  const { chats, setSelectedChat, theme, setTheme, user } = useAppContext();
-  const [search, setSearch] = useState(""); 
+export default function AppSidebar() {
+  const location = useLocation();
+  const [isDark, setIsDark] = useState(true);
+  const { toggleSidebar, state } = useSidebar();
+
+  useEffect(() => {
+    const checkTheme = () => {
+      const root = document.documentElement;
+      const body = document.body;
+      const parentDiv = document.querySelector(".dark");
+
+      const hasDark =
+        root.classList.contains("dark") ||
+        body.classList.contains("dark") ||
+        parentDiv !== null;
+
+      setIsDark(hasDark);
+    };
+
+    checkTheme();
+
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+      subtree: true,
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleNewChat = () => {
+    console.log("Создать новый чат");
+  };
+
+  const handleSearchChats = () => {
+    console.log("Поиск по истории чатов");
+  };
+
+  const handleImages = () => {
+    console.log("Открыть изображения");
+  };
 
   return (
-    <div className="flex flex-col  h-screen min-w-72 bg-gray-50 dark:bg-gradient-to-b dark:from-[#242124]/30 dark:to-[#000000]/30 border-r border-[#80609F]/30 backdrop-blur-3xl transition-all duration-500 max-md:relative left-0 z-1 p-5">
-      {/* Logo */}
-      <img
-        src={theme === "dark" ?  gpt_logo : gpt_logo_white }
-        alt=""
-        className="mx-auto w-[20px] "
-      />
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <div className="flex items-center justify-between px-2 py-4">
+          <Link to="/" className="group-data-[collapsible=icon]:hidden">
+            <img
+              src={isDark ? gpt_logo_white : gpt_logo}
+              alt="Logo"
+              className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            />
+          </Link>
+          <button
+            onClick={toggleSidebar}
+            className="p-2 rounded-lg hover:bg-sidebar-accent transition-colors ml-auto"
+            aria-label="Toggle sidebar"
+          >
+            <PanelLeft className="h-4 w-4 text-sidebar-foreground" />
+          </button>
+        </div>
+      </SidebarHeader>
 
-      {/* New Chat btn */}
-      <button className="flex justify-center items-center w-full py-2 mt-8 text-white bg-gradient-to-r from-[#A456F7] to-[#3D81F6] text-sm rounded-md cursor-pointer " >
-        <span className="mr-2 text-[25px]" >+</span>New Chat
-      </button>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleNewChat} tooltip="Новый чат">
+                  <Plus />
+                  <span>Новый чат</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
-       <div className="flex items-center gap-2 p-3 mt-4 border border-gray-400 dark:border-white/20 rounded-md ">
-       <img src={assets.search_icon} className="w-4 not-dark:invert" alt="" />
-       <input type="text" placeholder="Search Conversation" className="outline-0" />
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={handleSearchChats}
+                  tooltip="Поиск в чатах"
+                >
+                  <Search />
+                  <span>Поиск в чатах</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
-       </div>
-    </div>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={handleImages}
+                  isActive={location.pathname === "/image"}
+                  tooltip="Изображения"
+                >
+                  <Image />
+                  <span>Изображения</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={location.pathname === "/credits"}
+                  tooltip="Credits"
+                >
+                  <Link to="/credits">
+                    <DollarSign />
+                    <span>Credits</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={location.pathname === "/community"}
+                  tooltip="Community"
+                >
+                  <Link to="/community">
+                    <Users />
+                    <span>Community</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem> */}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <div className="text-xs text-sidebar-foreground/50 px-2 group-data-[collapsible=icon]:hidden">
+          Version 1.0.0
+        </div>
+      </SidebarFooter>
+    </Sidebar>
   );
-};
-
-export default SideBar;
+}
