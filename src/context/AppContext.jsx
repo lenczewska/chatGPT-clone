@@ -22,13 +22,13 @@ export const AppContextProvider = ({ children }) => {
         setSelectedChat(dummyChats[0])
     }
 
-    useEffect(() => {
-        if (theme === "dark") {
-            document.documentElement.classList.add("dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-        }
-    }, [theme])
+    // useEffect(() => {
+    //     if (theme === "dark") {
+    //         document.documentElement.classList.add("dark");
+    //     } else {
+    //         document.documentElement.classList.remove("dark");
+    //     }
+    // }, [theme])
 
     useEffect(()=>{
         if(user){

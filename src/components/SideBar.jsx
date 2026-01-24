@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  Home,
-  DollarSign,
-  Users,
-  Plus,
-  Image,
-  PanelLeft,
-  Search,
-} from "lucide-react";
+import { Plus, Image, PanelLeft, Search } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -21,13 +13,38 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "../components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../components/ui/tooltip";
+
+import SearchModal from "../components/SearchModal.jsx";
+import useHotKeys from "./hooks/useHotKeys";
 import gpt_logo from "../../public/gpt_logo.png";
 import gpt_logo_white from "../../public/gpt_logo_white.png";
 
-export default function AppSidebar() {
+export default function SideBar() {
   const location = useLocation();
   const [isDark, setIsDark] = useState(true);
   const { toggleSidebar, state } = useSidebar();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isOutlineOpen, setIsOutlineOpen] = useState(false);
+  const handleSearchModal = (value) => {
+    console.log(value);
+  };
+
+  useHotKeys([
+    {
+      keys: { ctrl: true, shift: false, alt: false, key: "k" },
+      callback: () => setIsSearchOpen(true),
+    },
+    {
+      keys: { ctrl: true, shift: true, alt: false, key: "o" },
+      callback: () => setIsOutlineOpen(true),
+    },
+  ]);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -59,10 +76,6 @@ export default function AppSidebar() {
     console.log("Создать новый чат");
   };
 
-  const handleSearchChats = () => {
-    console.log("Поиск по истории чатов");
-  };
-
   const handleImages = () => {
     console.log("Открыть изображения");
   };
@@ -70,20 +83,20 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center justify-between px-2 py-4">
+        <div className="flex items-center justify-between px-4 py-4">
           <Link to="/" className="group-data-[collapsible=icon]:hidden">
             <img
-              src={isDark ? gpt_logo_white : gpt_logo}
+              src={gpt_logo}
               alt="Logo"
-              className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
+              className="h-6 cursor-pointer hover:opacity-80 transition-opacity"
             />
           </Link>
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-sidebar-accent transition-colors ml-auto"
+            className=" rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
             aria-label="Toggle sidebar"
           >
-            <PanelLeft className="h-4 w-4 text-sidebar-foreground" />
+            <PanelLeft className="h-5 w-5 text-sidebar-foreground" />
           </button>
         </div>
       </SidebarHeader>
@@ -93,21 +106,57 @@ export default function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleNewChat} tooltip="Новый чат">
-                  <Plus />
-                  <span>Новый чат</span>
-                </SidebarMenuButton>
+                {/* chat */}
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarMenuButton onClick={handleNewChat}>
+                        <Plus className="cursor-pointer" />
+                        <span className="cursor-pointer">Новый чат</span>
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+
+                    <TooltipContent
+                      side="right"
+                      align="center"
+                      className="bg-gray-200 text-white"
+                    >
+                      <p className="text-xs  text-gray-600">Ctrl + Shift + O</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={handleSearchChats}
-                  tooltip="Поиск в чатах"
-                >
-                  <Search />
-                  <span>Поиск в чатах</span>
-                </SidebarMenuButton>
+                {/* search */}
+
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarMenuButton
+                        onClick={() => setIsSearchOpen((prev) => !prev)}
+                        tooltip="Поиск в чатах"
+                      >
+                        <Search className="cursor-pointer" />
+                        <span className="cursor-pointer">Поиск в чатах</span>
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+
+                    <TooltipContent
+                      side="right"
+                      align="center"
+                      className="bg-gray-200 text-white"
+                    >
+                      <p className="text-xs  text-gray-600">Ctrl + K</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </SidebarMenuItem>
+              <SearchModal
+                open={isSearchOpen}
+                onOpenChange={setIsSearchOpen}
+                onSearch={handleSearchModal}
+              />
 
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -115,8 +164,8 @@ export default function AppSidebar() {
                   isActive={location.pathname === "/image"}
                   tooltip="Изображения"
                 >
-                  <Image />
-                  <span>Изображения</span>
+                  <Image className="cursor-pointer" />
+                  <span className="cursor-pointer">Изображения</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 

@@ -16,7 +16,7 @@ function App() {
         <Sidebar />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center justify-end gap-2 border-b px-4">
-            <button
+            {/* <button
               onClick={() => setIsDark(!isDark)}
               className="p-2 rounded-lg hover:bg-accent transition-colors"
               aria-label="Toggle theme"
@@ -26,7 +26,7 @@ function App() {
               ) : (
                 <Moon className="h-5 w-5 text-foreground" />
               )}
-            </button>
+            </button> */}
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4">
             <Routes>

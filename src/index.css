@@ -2,16 +2,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:where(.dark, .dark *));
+/* @custom-variant dark (&:where(.dark, .dark *)); */
 
 * {
 
   font-family: "Outfit", sans-serif;
 }
 
-@theme{
+/* @theme{
     --color-primary: #E6CCFF;
-}
+} */
 
 ::-webkit-scrollbar{
     display: none;
@@ -163,7 +163,7 @@
   --sidebar-ring: oklch(0.704 0.04 256.788);
 }
 
-.dark {
+/* .dark {
 
   --background: oklch(0.129 0.042 264.695);
 
@@ -226,7 +226,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
 
   --sidebar-ring: oklch(0.551 0.027 264.364);
-}
+} */
 
 @layer base {
   * {
