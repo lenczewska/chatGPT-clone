@@ -19,13 +19,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../components/ui/tooltip";
+import { useAppContext } from "@/context/AppContext";
 
 import SearchModal from "../components/SearchModal.jsx";
 import useHotKeys from "./hooks/useHotKeys";
 import gpt_logo from "../../public/gpt_logo.png";
 import gpt_logo_white from "../../public/gpt_logo_white.png";
 
-export default function SideBar() {
+const SideBar = () => {
+  const { chats } = useAppContext();
+  const [search] = useState("");
   const location = useLocation();
   const [isDark, setIsDark] = useState(true);
   const { toggleSidebar, state } = useSidebar();
@@ -137,7 +140,7 @@ export default function SideBar() {
                         onClick={() => setIsSearchOpen((prev) => !prev)}
                         tooltip="Поиск в чатах"
                       >
-                        <Search className="cursor-pointer" />
+                        <Search className="cursor-pointer " value={search} />
                         <span className="cursor-pointer">Поиск в чатах</span>
                       </SidebarMenuButton>
                     </TooltipTrigger>
@@ -168,35 +171,41 @@ export default function SideBar() {
                   <span className="cursor-pointer">Изображения</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-
-              {/* <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={location.pathname === "/credits"}
-                  tooltip="Credits"
-                >
-                  <Link to="/credits">
-                    <DollarSign />
-                    <span>Credits</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={location.pathname === "/community"}
-                  tooltip="Community"
-                >
-                  <Link to="/community">
-                    <Users />
-                    <span>Community</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem> */}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <div className="ml-4 mr-4 text-sm text-gray-500 border-t pt-3 ">
+                <span>Ваши чаты</span>
+
+        </div>
+
+        {/* chats history */}
+        {chats.lenght > 0 && <p className="mt-4 text-sm">Recent Chats</p>}
+        <div className="fex-1 overflow-y-scroll mt-3 text-sm space-y-3 ml-2 mr-2 ">
+          {chats
+            .filter((chat) =>
+              chat.messages[0]
+                ? chat.messages[0]?.content
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+                : chat.name.toLowerCase().includes(search.toLowerCase()),
+            )
+            .map((chat) => (
+              <div
+                key={chat._id}
+                className="p-2  dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between group "
+              >
+                <p className="w-full truncate ">
+                  {chat.messages.lenght > 0
+                    ? chat.mesages[0].content.slice(0, 32)
+                    : chat.name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-[#B1A6C0]">{chat.updatedAt}</p>
+                <img src={gpt_logo} className="w-2 h-2" alt="" />
+              </div>
+            ))}
+        </div>
       </SidebarContent>
 
       <SidebarFooter>
@@ -206,4 +215,6 @@ export default function SideBar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};
+
+export default SideBar;

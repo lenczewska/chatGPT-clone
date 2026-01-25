@@ -102,7 +102,7 @@ export const dummyChats = [
             }
         ],
         "createdAt": "2025-08-14T13:29:31.398Z",
-        "updatedAt": "2025-08-14T13:29:54.753Z",
+        "updatedAt": "2025-08-14",
     },
     {
         "_id": "689ccb9016a922dd57a23fce",
@@ -265,8 +265,8 @@ export const dummyChats = [
             }
             
         ],
-        "createdAt": "2025-08-13T17:29:52.421Z",
-        "updatedAt": "2025-08-14T09:39:19.046Z",
+        "createdAt": "2025-08-13",
+        "updatedAt": "2025-08-14",
         "userName": "GreatStack"
     },
     {
@@ -275,8 +275,8 @@ export const dummyChats = [
         "name": "New Chat",
         "userName": "GreatStack",
         "messages": [],
-        "createdAt": "2025-08-13T17:29:52.421Z",
-        "updatedAt": "2025-08-14T09:39:19.046Z",
+        "createdAt": "2025-08-13",
+        "updatedAt": "2025-08-14",
     }
 ]
 
