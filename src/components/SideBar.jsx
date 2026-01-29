@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { use, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Plus, Image, PanelLeft, Search } from "lucide-react";
 import {
   Sidebar,
@@ -25,15 +25,20 @@ import SearchModal from "../components/SearchModal.jsx";
 import useHotKeys from "./hooks/useHotKeys";
 import gpt_logo from "../../public/gpt_logo.png";
 import gpt_logo_white from "../../public/gpt_logo_white.png";
+import { assets } from "@/assets/assets";
+import moment from "moment";
 
 const SideBar = () => {
-  const { chats } = useAppContext();
+  const { chats, theme, setTheme, user } = useAppContext();
   const [search] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const [isDark, setIsDark] = useState(true);
   const { toggleSidebar, state } = useSidebar();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isOutlineOpen, setIsOutlineOpen] = useState(false);
+  const [hoveredChatId, setHoveredChatId] = useState(null);
+
   const handleSearchModal = (value) => {
     console.log(value);
   };
@@ -79,17 +84,31 @@ const SideBar = () => {
     console.log("Создать новый чат");
   };
 
-  const handleImages = () => {
-    console.log("Открыть изображения");
-  };
+  const handleThemeToggle = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    console.log("Before:", {
+      theme,
+      newTheme,
+      hasClass: document.documentElement.classList.contains("dark"),
+      allClasses: document.documentElement.className,
+    });
+    setTheme(newTheme);
 
+    setTimeout(() => {
+      console.log("After:", {
+        theme: newTheme,
+        hasClass: document.documentElement.classList.contains("dark"),
+        allClasses: document.documentElement.className,
+      });
+    }, 200);
+  };
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <div className="flex items-center justify-between px-4 py-4">
           <Link to="/" className="group-data-[collapsible=icon]:hidden">
             <img
-              src={gpt_logo}
+              src={theme === "dark" ? gpt_logo_white : gpt_logo}
               alt="Logo"
               className="h-6 cursor-pointer hover:opacity-80 transition-opacity"
             />
@@ -163,7 +182,7 @@ const SideBar = () => {
 
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={handleImages}
+                  onClick={() => navigate("/community")}
                   isActive={location.pathname === "/image"}
                   tooltip="Изображения"
                 >
@@ -176,36 +195,78 @@ const SideBar = () => {
         </SidebarGroup>
 
         <div className="ml-4 mr-4 text-sm text-gray-500 border-t pt-3 ">
-                <span>Ваши чаты</span>
-
+          <span>Ваши чаты</span>
         </div>
 
         {/* chats history */}
-        {chats.lenght > 0 && <p className="mt-4 text-sm">Recent Chats</p>}
-        <div className="fex-1 overflow-y-scroll mt-3 text-sm space-y-3 ml-2 mr-2 ">
+
+        <div className="flex-1 overflow-y-scroll mt-3 text-sm space-y-3 ml-2 mr-2">
           {chats
-            .filter((chat) =>
-              chat.messages[0]
-                ? chat.messages[0]?.content
-                    .toLowerCase()
-                    .includes(search.toLowerCase())
-                : chat.name.toLowerCase().includes(search.toLowerCase()),
-            )
-            .map((chat) => (
-              <div
-                key={chat._id}
-                className="p-2  dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between group "
-              >
-                <p className="w-full truncate ">
-                  {chat.messages.lenght > 0
-                    ? chat.mesages[0].content.slice(0, 32)
-                    : chat.name}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-[#B1A6C0]">{chat.updatedAt}</p>
-                <img src={gpt_logo} className="w-2 h-2" alt="" />
-              </div>
-            ))}
+            .filter((chat) => {
+              const firstMessage = chat.messages?.[0]?.content;
+              return firstMessage
+                ? firstMessage.toLowerCase().includes(search.toLowerCase())
+                : chat.name.toLowerCase().includes(search.toLowerCase());
+            })
+            .map((chat) => {
+              const firstMessage = chat.messages?.[0]?.content;
+
+              return (
+                <div
+                  key={chat._id}
+                  className="p-2 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between items-center group"
+                  onMouseEnter={() => setHoveredChatId(chat._id)}
+                  onMouseLeave={() => setHoveredChatId(null)}
+                >
+                  <div className="flex flex-col overflow-hidden">
+                    <p className="truncate font-medium">
+                      {firstMessage ? firstMessage.slice(0, 32) : chat.name}
+                    </p>
+
+                    <span className="text-xs text-gray-500 dark:text-[#B1A6C0]">
+                      {moment(chat.updatedAt || chat.createdAt).fromNow()}
+                    </span>
+                  </div>
+
+                  {hoveredChatId === chat._id && (
+                    <img
+                      src={assets.bin_icon}
+                      className="rounded-full bg-gray-400 w-5 h-5 p-1 cursor-pointer not-dark:invert"
+                      alt="Delete chat"
+                    />
+                  )}
+                </div>
+              );
+            })}
         </div>
+
+        <div className="flex items-center justify-between gap-2 p-3 mt-1 border border-gray-300 dark:border-white/15 rounded-md">
+          <div className="flex items-center gap-2 text-sm">
+            <img src={assets.theme_icon} alt="" />
+            <p>Dark Mode</p>
+          </div>
+          <label className="relative inline-flex cursor-pointer">
+            <input
+              type="checkbox"
+              onChange={handleThemeToggle}
+              className="sr-only peer"
+              checked={theme === "dark"}
+            />
+            <div className="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-gray-600 transition-all"></div>
+            <span className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></span>
+          </label>
+        </div>
+
+        {/* user acc */}
+
+        <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/1 rounded-md cursor-pointer group ">
+        <img src={assets.user_icon} alt="" className="w-7 rounded-full" />
+        <p className="flex-1 text-sm dark:text-primary truncate" >
+          {user ? user.name :'Login your account'}
+        </p>
+        {user && <img src={assets.logout_icon} className="h-5 cursor-pointer hidden not-dark:invert group-hover:block" />}
+        <div className="flex flex-col text-sm">
+          </div></div>
       </SidebarContent>
 
       <SidebarFooter>

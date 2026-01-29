@@ -1,6 +1,5 @@
 import logo from "./logo.svg";
-import logo_full from "./logo_full.svg";
-import logo_full_dark from "./logo_full_dark.svg";
+
 import search_icon from "./search_icon.svg";
 import user_icon from "./user_icon.svg";
 import theme_icon from "./theme_icon.svg";
@@ -29,7 +28,6 @@ import ai_image12 from "./ai_image12.jpg";
 
 export const assets = {
     logo,
-    logo_full,
     search_icon,
     user_icon,
     theme_icon,
@@ -40,7 +38,6 @@ export const assets = {
     close_icon,
     bin_icon,
     logout_icon,
-    logo_full_dark,
     diamond_icon,
     gallery_icon
 };
