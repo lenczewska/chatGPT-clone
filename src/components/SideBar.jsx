@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Plus, Image, PanelLeft, Search } from "lucide-react";
 import {
@@ -27,16 +27,18 @@ import gpt_logo from "../../public/gpt_logo.png";
 import gpt_logo_white from "../../public/gpt_logo_white.png";
 import { assets } from "@/assets/assets";
 import moment from "moment";
+import "moment/locale/ru"; // Импорт русской локализации
 
-const SideBar = () => {
-  const { chats, theme, setTheme, user } = useAppContext();
+// Установка русской локали
+moment.locale("ru");
+
+const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
+  const { chats, theme, setTheme, user, setSelectedChat } = useAppContext();
   const [search] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
-  const [isDark, setIsDark] = useState(true);
-  const { toggleSidebar, state } = useSidebar();
+  const { toggleSidebar } = useSidebar();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isOutlineOpen, setIsOutlineOpen] = useState(false);
   const [hoveredChatId, setHoveredChatId] = useState(null);
 
   const handleSearchModal = (value) => {
@@ -48,41 +50,7 @@ const SideBar = () => {
       keys: { ctrl: true, shift: false, alt: false, key: "k" },
       callback: () => setIsSearchOpen(true),
     },
-    {
-      keys: { ctrl: true, shift: true, alt: false, key: "o" },
-      callback: () => setIsOutlineOpen(true),
-    },
   ]);
-
-  useEffect(() => {
-    const checkTheme = () => {
-      const root = document.documentElement;
-      const body = document.body;
-      const parentDiv = document.querySelector(".dark");
-
-      const hasDark =
-        root.classList.contains("dark") ||
-        body.classList.contains("dark") ||
-        parentDiv !== null;
-
-      setIsDark(hasDark);
-    };
-
-    checkTheme();
-
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-      subtree: true,
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const handleNewChat = () => {
-    console.log("Создать новый чат");
-  };
 
   const handleThemeToggle = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
@@ -102,10 +70,46 @@ const SideBar = () => {
       });
     }, 200);
   };
+
+  const handleChatClick = (chat) => {
+    setSelectedChat(chat);
+    navigate("/");
+    setIsMenuOpen(false);
+  };
+
+  const handleDeleteChat = (e, chatId) => {
+    e.stopPropagation();
+    // Добавьте здесь логику удаления чата
+    console.log("Delete chat:", chatId);
+  };
+
+  // Функция для форматирования времени
+  const formatTime = (date) => {
+    if (!date) return "";
+    const momentDate = moment(date);
+    const now = moment();
+    const diffInHours = now.diff(momentDate, "hours");
+    const diffInDays = now.diff(momentDate, "days");
+
+    if (diffInHours < 24) {
+      return momentDate.fromNow(); // "5 минут назад", "2 часа назад"
+    } else if (diffInDays < 7) {
+      return momentDate.calendar(null, {
+        lastDay: "[Вчера]",
+        lastWeek: "dddd", // "понедельник", "вторник"
+        sameElse: "DD.MM.YYYY",
+      });
+    } else {
+      return momentDate.format("DD.MM.YYYY");
+    }
+  };
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center justify-between px-4 py-4">
+        <div
+          className={`flex items-center justify-between px-4 py-4 ${!isMenuOpen && "max-md:-translate-x-full"}`}
+        >
           <Link to="/" className="group-data-[collapsible=icon]:hidden">
             <img
               src={theme === "dark" ? gpt_logo_white : gpt_logo}
@@ -115,7 +119,7 @@ const SideBar = () => {
           </Link>
           <button
             onClick={toggleSidebar}
-            className=" rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
+            className="rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
             aria-label="Toggle sidebar"
           >
             <PanelLeft className="h-5 w-5 text-sidebar-foreground" />
@@ -128,11 +132,15 @@ const SideBar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                {/* chat */}
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <SidebarMenuButton onClick={handleNewChat}>
+                      <SidebarMenuButton
+                        onClick={() => {
+                          navigate("/");
+                          setIsMenuOpen(false);
+                        }}
+                      >
                         <Plus className="cursor-pointer" />
                         <span className="cursor-pointer">Новый чат</span>
                       </SidebarMenuButton>
@@ -143,15 +151,13 @@ const SideBar = () => {
                       align="center"
                       className="bg-gray-200 text-white"
                     >
-                      <p className="text-xs  text-gray-600">Ctrl + Shift + O</p>
+                      <p className="text-xs text-gray-600">Ctrl + Shift + O</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
-                {/* search */}
-
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -159,7 +165,7 @@ const SideBar = () => {
                         onClick={() => setIsSearchOpen((prev) => !prev)}
                         tooltip="Поиск в чатах"
                       >
-                        <Search className="cursor-pointer " value={search} />
+                        <Search className="cursor-pointer" />
                         <span className="cursor-pointer">Поиск в чатах</span>
                       </SidebarMenuButton>
                     </TooltipTrigger>
@@ -169,7 +175,7 @@ const SideBar = () => {
                       align="center"
                       className="bg-gray-200 text-white"
                     >
-                      <p className="text-xs  text-gray-600">Ctrl + K</p>
+                      <p className="text-xs text-gray-600">Ctrl + K</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -182,7 +188,10 @@ const SideBar = () => {
 
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => navigate("/community")}
+                  onClick={() => {
+                    navigate("/community");
+                    setIsMenuOpen(false);
+                  }}
                   isActive={location.pathname === "/image"}
                   tooltip="Изображения"
                 >
@@ -194,13 +203,12 @@ const SideBar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="ml-4 mr-4 text-sm text-gray-500 border-t pt-3 ">
+        <div className="ml-4 mr-4 text-sm text-gray-500 border-t pt-3">
           <span>Ваши чаты</span>
         </div>
 
         {/* chats history */}
-
-        <div className="flex-1 overflow-y-scroll mt-3 text-sm space-y-3 ml-2 mr-2">
+        <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
           {chats
             .filter((chat) => {
               const firstMessage = chat.messages?.[0]?.content;
@@ -214,24 +222,26 @@ const SideBar = () => {
               return (
                 <div
                   key={chat._id}
-                  className="p-2 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between items-center group"
+                  onClick={() => handleChatClick(chat)}
+                  className="p-2 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between items-center group hover:bg-gray-100 dark:hover:bg-[#57317C]/20 transition-colors"
                   onMouseEnter={() => setHoveredChatId(chat._id)}
                   onMouseLeave={() => setHoveredChatId(null)}
                 >
-                  <div className="flex flex-col overflow-hidden">
+                  <div className="flex flex-col overflow-hidden flex-1">
                     <p className="truncate font-medium">
                       {firstMessage ? firstMessage.slice(0, 32) : chat.name}
                     </p>
 
                     <span className="text-xs text-gray-500 dark:text-[#B1A6C0]">
-                      {moment(chat.updatedAt || chat.createdAt).fromNow()}
+                      {formatTime(chat.updatedAt || chat.createdAt)}
                     </span>
                   </div>
 
                   {hoveredChatId === chat._id && (
                     <img
                       src={assets.bin_icon}
-                      className="rounded-full bg-gray-400 w-5 h-5 p-1 cursor-pointer not-dark:invert"
+                      onClick={(e) => handleDeleteChat(e, chat._id)}
+                      className="rounded-full bg-gray-400 w-5 h-5 p-1 cursor-pointer dark:invert-0 hover:bg-red-500 transition-colors"
                       alt="Delete chat"
                     />
                   )}
@@ -258,15 +268,19 @@ const SideBar = () => {
         </div>
 
         {/* user acc */}
-
-        <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/1 rounded-md cursor-pointer group ">
-        <img src={assets.user_icon} alt="" className="w-7 rounded-full" />
-        <p className="flex-1 text-sm dark:text-primary truncate" >
-          {user ? user.name :'Login your account'}
-        </p>
-        {user && <img src={assets.logout_icon} className="h-5 cursor-pointer hidden not-dark:invert group-hover:block" />}
-        <div className="flex flex-col text-sm">
-          </div></div>
+        <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer group">
+          <img src={assets.user_icon} alt="" className="w-7 rounded-full" />
+          <p className="flex-1 text-sm dark:text-primary truncate">
+            {user ? user.name : "Login your account"}
+          </p>
+          {user && (
+            <img
+              src={assets.logout_icon}
+              className="h-5 cursor-pointer hidden dark:invert-0 group-hover:block"
+              alt="Logout"
+            />
+          )}
+        </div>
       </SidebarContent>
 
       <SidebarFooter>
