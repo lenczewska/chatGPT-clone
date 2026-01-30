@@ -430,3 +430,13 @@
 .dark .search-inp{
   color: white;
 }
+
+.text-sm{
+  color:black;
+}
+
+ .dark .text-sm  {
+  color:rgb(255, 255, 255);
+}
+
+
