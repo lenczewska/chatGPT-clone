@@ -8,6 +8,7 @@ import Community from "./pages/Community";
 import { useAppContext } from "@/context/AppContext";
 import "./assets/prism.css";
 import Loading from "./pages/Loading";
+import Login from "./pages/Login";
 
 function App() {
   const { theme } = useAppContext();
@@ -24,7 +25,7 @@ function App() {
           <div className="flex flex-1 flex-col gap-4 p-4">
             <Routes>
               <Route path="/" element={<ChatBox />} />
-              <Route path="/credits" element={<Credits />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/community" element={<Community />} />
             </Routes>
           </div>

@@ -178,7 +178,6 @@
   all: revert;
 }
 
-/* Markdown стили - обновленные с уменьшенными отступами */
 .markdown-content {
   line-height: 1.6;
   word-wrap: break-word;
@@ -396,6 +395,38 @@
   background-color: white !important;
 }
 
-.search-box{
+.search-box {
   color: #aaa;
+}
+
+.login-h {
+  color: black;
+}
+
+.dark .login-h {
+  color: white;
+}
+
+.input {
+  color: #0a0a0a;
+}
+
+.dark .c-here {
+  color: white;
+}
+
+.c-here {
+  color: #575757;
+}
+
+.dark .c-here {
+  color: white;
+}
+
+.search-inp{
+  color:#0a0a0a;
+}
+
+.dark .search-inp{
+  color: white;
 }

@@ -238,7 +238,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                     <img
                       src={assets.bin_icon}
                       onClick={(e) => handleDeleteChat(e, chat._id)}
-                      className="rounded-full bg-gray-400 w-5 h-5 p-1 cursor-pointer dark:invert-0 hover:bg-red-500 transition-colors"
+                      className="rounded-full bg-gray-400 w-5 h-5 p-1 cursor-pointer dark:invert-0 hover:bg-gray-700 transition-colors"
                       alt="Delete chat"
                     />
                   )}
@@ -266,10 +266,10 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
 
         {/* user acc  */}
          <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer group">
-          <img src={assets.user_icon} alt="" className="w-7 rounded-full" />
-          <p className="flex-1 text-sm dark:text-primary truncate">
+          {/* <img src={assets.user_icon} alt="" className="w-7 rounded-full" /> */}
+          {/* <p className="flex-1 text-sm dark:text-primary truncate">
             {user ? user.name : "Login your account"}
-          </p>
+          </p> */}
           {user && (
             <img
               src={assets.logout_icon}

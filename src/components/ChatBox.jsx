@@ -108,7 +108,7 @@ const ChatBox = (theme, setTheme) => {
       </div>
 
       {/* Publish to Community Checkbox */}
-      {mode === "image" && (
+      {/* {mode === "image" && (
         <label className="inline-flex items-center gap-2 mb-3 text-sm mx-auto cursor-pointer">
           <input
             type="checkbox"
@@ -118,7 +118,7 @@ const ChatBox = (theme, setTheme) => {
           />
           <span className="text-xs">Опубликовать изображение в сообществе</span>
         </label>
-      )}
+      )} */}
 
       {/* Input Form */}
       <form
@@ -144,7 +144,7 @@ const ChatBox = (theme, setTheme) => {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Задайте вопрос..."
-          className="flex-1 w-full text-sm outline-none bg-transparent dark:text-white placeholder:text-gray-400"
+          className=" search-inp flex-1 w-full text-sm outline-none bg-transparent placeholder:text-gray-400"
           disabled={loading}
           required
         />
