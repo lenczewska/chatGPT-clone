@@ -395,3 +395,7 @@
 .dark .loader div {
   background-color: white !important;
 }
+
+.search-box{
+  color: #aaa;
+}

@@ -78,7 +78,6 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
 
   const handleDeleteChat = (e, chatId) => {
     e.stopPropagation();
-    // Добавьте здесь логику удаления чата
     console.log("Delete chat:", chatId);
   };
 
@@ -265,8 +264,8 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
           </label>
         </div>
 
-        {/* user acc */}
-        <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer group">
+        {/* user acc  */}
+         <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer group">
           <img src={assets.user_icon} alt="" className="w-7 rounded-full" />
           <p className="flex-1 text-sm dark:text-primary truncate">
             {user ? user.name : "Login your account"}
