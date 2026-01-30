@@ -6,6 +6,7 @@ import ChatBox from "./components/ChatBox";
 import Credits from "./pages/Credits";
 import Community from "./pages/Community";
 import { useAppContext } from "@/context/AppContext";
+import './assets/prism.css'
 
 function App() {
   const { theme } = useAppContext();

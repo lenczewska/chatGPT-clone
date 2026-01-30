@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Plus, Image, PanelLeft, Search } from "lucide-react";
+import { Plus, Image, PanelLeft, Search, TextCursor } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -27,9 +27,8 @@ import gpt_logo from "../../public/gpt_logo.png";
 import gpt_logo_white from "../../public/gpt_logo_white.png";
 import { assets } from "@/assets/assets";
 import moment from "moment";
-import "moment/locale/ru"; // Импорт русской локализации
+import "moment/locale/ru";
 
-// Установка русской локали
 moment.locale("ru");
 
 const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
@@ -83,7 +82,6 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     console.log("Delete chat:", chatId);
   };
 
-  // Функция для форматирования времени
   const formatTime = (date) => {
     if (!date) return "";
     const momentDate = moment(date);
@@ -92,11 +90,11 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     const diffInDays = now.diff(momentDate, "days");
 
     if (diffInHours < 24) {
-      return momentDate.fromNow(); // "5 минут назад", "2 часа назад"
+      return momentDate.fromNow(); 
     } else if (diffInDays < 7) {
       return momentDate.calendar(null, {
         lastDay: "[Вчера]",
-        lastWeek: "dddd", // "понедельник", "вторник"
+        lastWeek: "dddd", 
         sameElse: "DD.MM.YYYY",
       });
     } else {

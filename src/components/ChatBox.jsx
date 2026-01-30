@@ -8,6 +8,12 @@ const ChatBox = () => {
   const { selectedChat, theme } = useAppContext();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [promt, setPromt] = useState("");
+  const [mode, setMode] = useState("text");
+  const [isPublished, setIsPublished] = useState(false);
+  const onSybmit = async (e) => {
+    e.preventDefault();
+  };
 
   useEffect(() => {
     if (selectedChat) {
@@ -29,9 +35,37 @@ const ChatBox = () => {
         {messages.map((message, index) => (
           <Message key={index} message={message} />
         ))}
+        {loading && (
+          <div className="loader flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-white animate-bounce "></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-white animate-bounce "></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-white animate-bounce "></div>
+          </div>
+        )}
       </div>
 
       {/* Prompt box */}
+      <form>
+        <select
+          onChange={(e) => setMode(e.target.value)}
+          value={mode}
+          className="text-sm pl-3 pr-2 outline-none"
+        >
+          <option className="dark:bg-purple-900" value="text">
+            Text
+          </option>
+          <option className="dark:bg-purple-900" value="text">
+            Image
+          </option>
+        </select>
+        <input
+          onChange={() => setPromt(e.target.value)}
+          type="text"
+          placeholder="Задайте вопрос..."
+          className="flex-1 w-full text-sm outline-none"
+          required
+        />
+      </form>
     </div>
   );
 };

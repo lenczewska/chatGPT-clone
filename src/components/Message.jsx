@@ -1,12 +1,17 @@
 // Message.jsx
 import { assets } from "@/assets/assets";
-import React from "react";
+import React, { useEffect } from "react";
 import Markdown from "react-markdown";
+import Prism from "prismjs";
 import moment from "moment";
 import "moment/locale/ru";
 moment.locale("ru");
 
 const Message = ({ message }) => {
+  useEffect(() => {
+    Prism.highlightAll();
+  }, [message.content]);
+
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
     const momentDate = moment(timestamp);
@@ -29,8 +34,8 @@ const Message = ({ message }) => {
     // Убираем звездочки для жирного текста **text** и *text*
     return text
       .replace(/\*\*(.+?)\*\*/g, "$1") // Убираем **жирный**
-      .replace(/\*(.+?)\*/g, "$1")     // Убираем *курсив*
-      .replace(/_(.+?)_/g, "$1");      // Убираем _курсив_
+      .replace(/\*(.+?)\*/g, "$1") // Убираем *курсив*
+      .replace(/_(.+?)_/g, "$1"); // Убираем _курсив_
   };
 
   return (
@@ -45,7 +50,11 @@ const Message = ({ message }) => {
               {formatTime(message.timestamp)}
             </span>
           </div>
-          <img src={assets.user_icon} className="w-8 h-8 rounded-full flex-shrink-0" alt="" />
+          <img
+            src={assets.user_icon}
+            className="w-8 h-8 rounded-full flex-shrink-0"
+            alt=""
+          />
         </div>
       ) : (
         <div className="flex flex-col gap-2 p-3 px-4 max-w-2xl bg-primary/20 dark:bg-[#57317C]/30 border border-[#80609F]/30 rounded-lg my-4">

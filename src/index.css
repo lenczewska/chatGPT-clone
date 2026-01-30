@@ -178,11 +178,10 @@
   all: revert;
 }
 
+/* Markdown стили - обновленные с уменьшенными отступами */
 .markdown-content {
-  line-height: 1.2;
+  line-height: 1.6;
   word-wrap: break-word;
-  font-size: 15px;
-  font-weight: 500;
 }
 
 .markdown-content > *:first-child {
@@ -194,39 +193,46 @@
 }
 
 .markdown-content p {
-  margin-bottom: 1em;
-  margin-top: 0;
+  margin: 0 0 0.4em 0 !important;
 }
 
 .markdown-content h1 {
   font-size: 1.5em;
   font-weight: 700;
-  margin-top: 1.2em;
-  margin-bottom: 0.6em;
+  margin: 0.5em 0 0.3em 0 !important;
   line-height: 1.3;
+}
+
+.markdown-content h1:not(:first-child) {
+  margin-top: 0.7em !important;
 }
 
 .markdown-content h2 {
   font-size: 1.3em;
   font-weight: 700;
-  margin-top: 1em;
-  margin-bottom: 0.5em;
+  margin: 0.4em 0 0.25em 0 !important;
   line-height: 1.3;
+}
+
+.markdown-content h2:not(:first-child) {
+  margin-top: 0.6em !important;
 }
 
 .markdown-content h3 {
   font-size: 1.15em;
   font-weight: 700;
-  margin-top: 0.8em;
-  margin-bottom: 0.4em;
+  margin: 0.3em 0 0.2em 0 !important;
   line-height: 1.3;
+}
+
+.markdown-content h3:not(:first-child) {
+  margin-top: 0.5em !important;
 }
 
 .markdown-content ul,
 .markdown-content ol {
-  margin-top: 0.5em;
-  margin-bottom: 1em;
-  padding-left: 1.5em;
+  margin: 0.3em 0 0.4em 0 !important;
+  padding-left: 1.5em !important;
 }
 
 .markdown-content ul {
@@ -238,19 +244,30 @@
 }
 
 .markdown-content li {
-  margin-bottom: 0.4em;
-  line-height: 1.6;
+  margin: 0 0 0.25em 0 !important;
+  padding: 0 !important;
+  line-height: 1.5;
+}
+
+.markdown-content li:last-child {
+  margin-bottom: 0 !important;
 }
 
 .markdown-content li > p {
-  margin-bottom: 0.4em;
+  margin: 0 !important;
+  display: inline;
+}
+
+.markdown-content li > ul,
+.markdown-content li > ol {
+  margin: 0.2em 0 !important;
 }
 
 .markdown-content code {
   background-color: rgba(0, 0, 0, 0.08);
   padding: 0.15em 0.4em;
   border-radius: 4px;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
   font-size: 0.88em;
 }
 
@@ -260,11 +277,9 @@
 
 .markdown-content pre {
   background-color: rgba(0, 0, 0, 0.04);
-  padding: 1em;
   border-radius: 6px;
   overflow-x: auto;
-  margin-top: 0.5em;
-  margin-bottom: 1em;
+  margin: 0.4em 0 !important;
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -277,7 +292,7 @@
   background-color: transparent;
   padding: 0;
   display: block;
-  line-height: 1.5;
+  line-height: 1.3;
 }
 
 .markdown-content a {
@@ -310,7 +325,7 @@
 .markdown-content blockquote {
   border-left: 3px solid #e5e7eb;
   padding-left: 1em;
-  margin: 1em 0;
+  margin: 0.4em 0 !important;
   font-style: italic;
   color: #6b7280;
 }
@@ -323,7 +338,7 @@
 .markdown-content hr {
   border: none;
   border-top: 1px solid #e5e7eb;
-  margin: 1.5em 0;
+  margin: 0.5em 0 !important;
 }
 
 .dark .markdown-content hr {
@@ -333,7 +348,7 @@
 .markdown-content table {
   border-collapse: collapse;
   width: 100%;
-  margin: 1em 0;
+  margin: 0.2em 0 !important;
 }
 
 .markdown-content th,
@@ -361,5 +376,22 @@
   max-width: 100%;
   height: auto;
   border-radius: 6px;
-  margin: 0.5em 0;
+  margin: 0.2em 0 !important;
+}
+
+.loader div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loader div:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.loader div {
+  background-color: gray;
+  width: 7px !important;
+  height: 7px !important;
+}
+
+.dark .loader div {
+  background-color: white !important;
 }
