@@ -29,7 +29,6 @@ import ai_image12 from "./ai_image12.jpg";
 export const assets = {
     logo,
     search_icon,
-    user_icon,
     theme_icon,
     send_icon,
     stop_icon,

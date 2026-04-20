@@ -20,7 +20,7 @@ import {
   TooltipTrigger,
 } from "../components/ui/tooltip";
 import { useAppContext } from "@/context/AppContext";
-
+import Avatar from "./Avatar";
 import SearchModal from "../components/SearchModal.jsx";
 import useHotKeys from "./hooks/useHotKeys";
 import gpt_logo from "../../public/gpt_logo.png";
@@ -89,11 +89,11 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     const diffInDays = now.diff(momentDate, "days");
 
     if (diffInHours < 24) {
-      return momentDate.fromNow(); 
+      return momentDate.fromNow();
     } else if (diffInDays < 7) {
       return momentDate.calendar(null, {
         lastDay: "[Вчера]",
-        lastWeek: "dddd", 
+        lastWeek: "dddd",
         sameElse: "DD.MM.YYYY",
       });
     } else {
@@ -265,15 +265,12 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
 
         {/* user acc  */}
-         <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer group">
-          {/* <img src={assets.user_icon} alt="" className="w-7 rounded-full" /> */}
-          {/* <p className="flex-1 text-sm dark:text-primary truncate">
-            {user ? user.name : "Login your account"}
-          </p> */}
+        <div className="group flex items-center justify-between gap-3 p-3 mt-3 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20">
+          <Avatar user={user} />
           {user && (
             <img
               src={assets.logout_icon}
-              className="h-5 cursor-pointer hidden dark:invert-0 group-hover:block"
+              className="h-5 cursor-pointer hidden black group-hover:block dark:white"
               alt="Logout"
             />
           )}

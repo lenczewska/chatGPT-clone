@@ -28,14 +28,12 @@ const Message = ({ message }) => {
     }
   };
 
-  // Функция для очистки markdown символов, если нужно
   const cleanMarkdown = (text) => {
     if (!text) return "";
-    // Убираем звездочки для жирного текста **text** и *text*
     return text
-      .replace(/\*\*(.+?)\*\*/g, "$1") // Убираем **жирный**
-      .replace(/\*(.+?)\*/g, "$1") // Убираем *курсив*
-      .replace(/_(.+?)_/g, "$1"); // Убираем _курсив_
+      .replace(/\*\*(.+?)\*\*/g, "$1") 
+      .replace(/\*(.+?)\*/g, "$1") 
+      .replace(/_(.+?)_/g, "$1"); 
   };
 
   return (

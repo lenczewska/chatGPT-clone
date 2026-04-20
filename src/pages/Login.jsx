@@ -44,7 +44,7 @@ const Login = () => {
         name: formData.name,
       });
 
-      console.log("Результат регистрации:", result); // DEBUG
+      console.log("Результат регистрации:", result); 
 
       if (result.error) {
         setError(result.error.message || "Ошибка регистрации");
@@ -72,10 +72,10 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center ">
+    <div className="flex justify-center items-center ">
       <form
         onSubmit={handleSubmit}
-        className=" sm:w-[352px] w-full text-center border border-gray-300/60 dark:border-gray-700 rounded-2xl px-8 bg-transparent"
+        className=" sm:w-[320px]  w-full text-center border border-gray-300/60 dark:border-gray-700 rounded-2xl px-8 bg-transparent"
       >
         <h1 className=" login-h text-gray-900 dark:text-white text-3xl mt-10 font-medium">
           {state === "login" ? "Login" : "Sign up"}
@@ -84,7 +84,6 @@ const Login = () => {
           Please sign in to continue
         </p>
 
-        {/* Показываем ошибки */}
         {error && (
           <div className="mt-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 rounded-lg">
             <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
@@ -186,7 +185,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 w-full h-11 rounded-full text-white bg-gray dark:bg-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-2 w-full h-11 rounded-full text-white bg-gray-400 dark:bg-gray-500 hover:bg-gray-200 dark:hover:bg-gray-800 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Loading..." : state === "login" ? "Login" : "Sign up"}
         </button>

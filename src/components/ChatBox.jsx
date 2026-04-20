@@ -2,8 +2,8 @@ import { useAppContext } from "@/context/AppContext";
 import React, { useEffect, useState, useRef } from "react";
 import Message from "./Message";
 import stop_icon from "../../public/stop_icon.jpg";
-import send_icon_dark from "../../public/send_icon_dark.png"
-import send_icon_light from "../../public/send_icon_light.png"
+import send_icon_dark from "../../public/send_icon_dark.png";
+import send_icon_light from "../../public/send_icon_light.png";
 
 const ChatBox = (theme, setTheme) => {
   const containerRef = useRef(null);
@@ -53,7 +53,6 @@ const ChatBox = (theme, setTheme) => {
     try {
       setLoading(true);
 
-      // TODO: Здесь будет API запрос
       const newMessage = {
         role: "user",
         content: prompt,
@@ -63,13 +62,10 @@ const ChatBox = (theme, setTheme) => {
       setMessages((prev) => [...prev, newMessage]);
       setPrompt("");
 
-      // Если режим image и isPublished - логика публикации
       if (mode === "image" && isPublished) {
-        // TODO: Логика публикации в сообщество
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      // TODO: Показать уведомление об ошибке
     } finally {
       setLoading(false);
     }
@@ -82,6 +78,7 @@ const ChatBox = (theme, setTheme) => {
   return (
     <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40backdrop-blur-sm">
       {/* Chat Container */}
+
       <div
         ref={containerRef}
         className="flex-1 mb-5 overflow-y-scroll scrollbar-hide max-h-[70vh]"
@@ -106,19 +103,6 @@ const ChatBox = (theme, setTheme) => {
           </div>
         )}
       </div>
-
-      {/* Publish to Community Checkbox */}
-      {/* {mode === "image" && (
-        <label className="inline-flex items-center gap-2 mb-3 text-sm mx-auto cursor-pointer">
-          <input
-            type="checkbox"
-            checked={isPublished}
-            onChange={(e) => setIsPublished(e.target.checked)}
-            className="cursor-pointer"
-          />
-          <span className="text-xs">Опубликовать изображение в сообществе</span>
-        </label>
-      )} */}
 
       {/* Input Form */}
       <form
