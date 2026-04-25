@@ -2,12 +2,13 @@ import { useAppContext } from "@/context/AppContext";
 import React, { useEffect, useState, useRef } from "react";
 import Message from "./Message";
 import stop_icon from "../../public/stop_icon.jpg";
-import send_icon_dark from "../../public/send_icon_dark.png";
-import send_icon_light from "../../public/send_icon_light.png";
+import darkForWhite from "../assets/darkForWhite.png";
+import whiteForDark from "../assets/whiteForDark.png";
 
-const ChatBox = (theme, setTheme) => {
+const ChatBox = () => {
+  const { selectedChat, theme } = useAppContext();
+
   const containerRef = useRef(null);
-  const { selectedChat } = useAppContext();
 
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -72,8 +73,21 @@ const ChatBox = (theme, setTheme) => {
   };
   const getButtonIcon = () => {
     if (loading) return stop_icon;
-    return theme === "dark" ? send_icon_light : send_icon_dark;
+    return theme === "dark" ? whiteForDark : darkForWhite;
   };
+
+  const phrases = [
+    "Ask me anything!",
+    "What's on your mind?",
+    "How can I help?",
+    "What would you like to know?",
+    "Let's talk!",
+    "Fire away!",
+  ];
+
+  const [placeholder] = useState(
+    () => phrases[Math.floor(Math.random() * phrases.length)],
+  );
 
   return (
     <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40backdrop-blur-sm">
@@ -85,8 +99,8 @@ const ChatBox = (theme, setTheme) => {
       >
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center">
-            <p className="mt-5 text-4xl sm:text-6xl text-center text-gray-600">
-              Ask me anything
+            <p className="mt-5 text-3xl sm:text-6xl text-center text-gray-500  ">
+              {placeholder}
             </p>
           </div>
         ) : (

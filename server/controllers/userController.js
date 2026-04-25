@@ -17,9 +17,13 @@ export const registerUser = async (req, res) => {
     if (userExists) {
       return res.json({ success: false, message: "User already exists" });
     }
-    const user = await User.create({ name, email, password });
+
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+
+    const user = await User.create({ name, email, password: hashedPassword });
     const token = generateToken(user._id);
-    res.json({ success: true.token });
+    res.json({ success: true, token }); // 👈 была точка вместо запятой
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
@@ -29,11 +33,10 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const userExists = await User.findOne({ email });
-    if (user) {
-      const isMatch = await bcrypt.compare(password, user.password);
-
+    if (userExists) { // 👈 было user
+      const isMatch = await bcrypt.compare(password, userExists.password); // 👈 было user
       if (isMatch) {
-        const token = generateToken(user._id);
+        const token = generateToken(userExists._id); // 👈 было user
         return res.json({ success: true, token });
       }
     }

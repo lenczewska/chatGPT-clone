@@ -36,7 +36,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
   const [search] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, state } = useSidebar();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [hoveredChatId, setHoveredChatId] = useState(null);
 
@@ -147,6 +147,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                       side="right"
                       align="center"
                       className="bg-gray-200 text-white"
+                      hidden={state === "expanded"}
                     >
                       <p className="text-xs text-gray-600">Ctrl + Shift + O</p>
                     </TooltipContent>
@@ -163,14 +164,19 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                         tooltip="Поиск в чатах"
                       >
                         <Search className="cursor-pointer" />
-                        <span className="cursor-pointer">Поиск в чатах</span>
+                        <span
+                          className="cursor-pointer"
+                          hidden={state === "collapsed"}
+                        >
+                          Поиск в чатах
+                        </span>
                       </SidebarMenuButton>
                     </TooltipTrigger>
-
                     <TooltipContent
                       side="right"
                       align="center"
                       className="bg-gray-200 text-white"
+                      hidden={state === "expanded"}
                     >
                       <p className="text-xs text-gray-600">Ctrl + K</p>
                     </TooltipContent>
@@ -200,10 +206,11 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="ml-4 mr-4 text-sm text-gray-500 border-t pt-3">
+        <div
+          className={`ml-4 mr-4 text-sm text-gray-500 border-t pt-3 ${state === "collapsed" ? "hidden" : ""}`}
+        >
           <span>Ваши чаты</span>
         </div>
-
         {/* chats history */}
         <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
           {chats
@@ -247,7 +254,10 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
             })}
         </div>
 
-        <div className="flex items-center justify-between gap-2 p-3 mt-1 border border-gray-300 dark:border-white/15 rounded-md">
+        <div
+          className="flex items-center justify-between gap-2 p-3 mt-1 border border-gray-300 dark:border-white/15 rounded-md"
+          hidden={state === "collapsed"}
+        >
           <div className="flex items-center gap-2 text-sm">
             <img src={assets.theme_icon} alt="" />
             <p>Dark Mode</p>
