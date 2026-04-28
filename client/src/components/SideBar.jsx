@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Plus, Image, PanelLeft, Search, TextCursor } from "lucide-react";
+import { Image, PanelLeft, Search, TextCursor } from "lucide-react";
+import Plus from "./ui/plus";
 import {
   Sidebar,
   SidebarContent,
@@ -23,11 +24,14 @@ import { useAppContext } from "@/context/AppContext";
 import Avatar from "./Avatar";
 import SearchModal from "../components/SearchModal.jsx";
 import useHotKeys from "./hooks/useHotKeys";
-import gpt_logo from "../../public/gpt_logo.png";
-import gpt_logo_white from "../../public/gpt_logo_white.png";
+import logoFluxDark from "../../public/logoFluxDark.png";
+import favFluxLogo from "../../public/favFluxLogo.png"
+import logoFluxWhite from "../../public/logoFluxWhite.png";
 import { assets } from "@/assets/assets";
 import moment from "moment";
 import "moment/locale/ru";
+import Switch from "./ui/switch";
+import LogOut from "./ui/logout";
 
 moment.locale("ru");
 
@@ -109,18 +113,30 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         >
           <Link to="/" className="group-data-[collapsible=icon]:hidden">
             <img
-              src={theme === "dark" ? gpt_logo_white : gpt_logo}
+              src={theme === "dark" ? logoFluxWhite : logoFluxDark}
               alt="Logo"
               className="h-6 cursor-pointer hover:opacity-80 transition-opacity"
             />
           </Link>
-          <button
-            onClick={toggleSidebar}
-            className="rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
-            aria-label="Toggle sidebar"
-          >
-            <PanelLeft className="h-5 w-5 text-sidebar-foreground" />
-          </button>
+          {state === "collapsed" ? (
+            // Кнопка с логотипом, открывает сайдбар
+            <button
+              onClick={toggleSidebar}
+              className="rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
+              aria-label="Open sidebar"
+            >
+              <img src={favFluxLogo} alt="Logo" className="h-6 w-6" />
+            </button>
+          ) : (
+            // Кнопка с иконкой PanelLeft, закрывает сайдбар
+            <button
+              onClick={toggleSidebar}
+              className="rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
+              aria-label="Toggle sidebar"
+            >
+              <PanelLeft className="h-5 w-5 text-sidebar-foreground" />
+            </button>
+          )}
         </div>
       </SidebarHeader>
 
@@ -161,7 +177,6 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                     <TooltipTrigger asChild>
                       <SidebarMenuButton
                         onClick={() => setIsSearchOpen((prev) => !prev)}
-                        tooltip="Поиск в чатах"
                       >
                         <Search className="cursor-pointer" />
                         <span
@@ -196,7 +211,6 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                     setIsMenuOpen(false);
                   }}
                   isActive={location.pathname === "/image"}
-                  tooltip="Изображения"
                 >
                   <Image className="cursor-pointer" />
                   <span className="cursor-pointer">Изображения</span>
@@ -253,37 +267,24 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
               );
             })}
         </div>
-
-        <div
-          className="flex items-center justify-between gap-2 p-3 mt-1 border border-gray-300 dark:border-white/15 rounded-md"
+        {/* <div
+          className="flex items-center justify-between gap-2 p-1 mt-1 border dark:border-white/15 rounded-md bg-gray-100 ml-1 mr-1  "
           hidden={state === "collapsed"}
         >
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-sm ">
             <img src={assets.theme_icon} alt="" />
             <p>Dark Mode</p>
           </div>
-          <label className="relative inline-flex cursor-pointer">
-            <input
-              type="checkbox"
-              onChange={handleThemeToggle}
-              className="sr-only peer"
-              checked={theme === "dark"}
-            />
-            <div className="w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-gray-600 transition-all"></div>
-            <span className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-4"></span>
-          </label>
-        </div>
+          <Switch
+            checked={theme === "dark"}
+            onCheckedChange={handleThemeToggle}
+          />
+        </div> */}
 
         {/* user acc  */}
         <div className="group flex items-center justify-between gap-3 p-3 mt-3 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20">
           <Avatar user={user} />
-          {user && (
-            <img
-              src={assets.logout_icon}
-              className="h-5 cursor-pointer hidden black group-hover:block dark:white"
-              alt="Logout"
-            />
-          )}
+          {state !== "collapsed" && <LogOut />}
         </div>
       </SidebarContent>
 

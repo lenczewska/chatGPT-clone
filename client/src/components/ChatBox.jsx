@@ -82,7 +82,6 @@ const ChatBox = () => {
     "How can I help?",
     "What would you like to know?",
     "Let's talk!",
-    "Fire away!",
   ];
 
   const [placeholder] = useState(
@@ -92,14 +91,15 @@ const ChatBox = () => {
   return (
     <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40backdrop-blur-sm">
       {/* Chat Container */}
-
       <div
         ref={containerRef}
-        className="flex-1 mb-5 overflow-y-scroll scrollbar-hide max-h-[70vh]"
+        className="flex-1 mb-8 overflow-y-scroll scrollbar-hide max-h-[70vh]"
       >
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center">
-            <p className="mt-5 text-3xl sm:text-6xl text-center text-gray-500  ">
+            <p
+              className={`sm:text-7xl mb-6 text-center ${theme === "dark" ? "text-white" : "text-black"}`}
+            >
               {placeholder}
             </p>
           </div>

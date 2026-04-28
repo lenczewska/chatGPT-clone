@@ -1,7 +1,9 @@
 import React from "react";
 
-const Avatar = ({ user, size = 40 }) => {
-  const firstLetter = user?.name?.charAt(0).toUpperCase();
+const Avatar = ({ user, size = 20 }) => {
+  const firstLetter = user?.name?.charAt(0).toUpperCase() 
+    || user?.email?.charAt(0).toUpperCase() 
+    || "A";
 
   if (user?.avatar) {
     return (
@@ -17,9 +19,9 @@ const Avatar = ({ user, size = 40 }) => {
   return (
     <div
       style={{ width: size, height: size }}
-      className="rounded-full bg-pink-300 flex items-center justify-center text-white font-semibold"
+      className="rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold text-xs "
     >
-    A
+      {firstLetter}
     </div>
   );
 };
