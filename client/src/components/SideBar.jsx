@@ -267,22 +267,22 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
               );
             })}
         </div>
-        {/* <div
-          className="flex items-center justify-between gap-2 p-1 mt-1 border dark:border-white/15 rounded-md bg-gray-100 ml-1 mr-1  "
+        <div
+          className="flex items-center justify-between gap-2 p-2 mt-1 border dark:border-white/15 rounded-md  ml-1 mr-1  "
           hidden={state === "collapsed"}
         >
           <div className="flex items-center gap-2 text-sm ">
-            <img src={assets.theme_icon} alt="" />
-            <p>Dark Mode</p>
+            {/* <img src={assets.theme_icon} alt="" />
+            <p>Dark Mode</p> */}
           </div>
           <Switch
             checked={theme === "dark"}
             onCheckedChange={handleThemeToggle}
           />
-        </div> */}
+        </div>
 
         {/* user acc  */}
-        <div className="group flex items-center justify-between gap-3 p-3 mt-3 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20">
+        <div className="group flex items-center justify-between gap-3 p-2 mt-3 mr-1 ml-1 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20">
           <Avatar user={user} />
           {state !== "collapsed" && <LogOut />}
         </div>
