@@ -71,7 +71,7 @@ const StyledWrapper = styled.div`
   }
 
   .toggle-checkbox:checked ~ .toggle-slot .toggle-button {
-    background-color: #6D5FB9;
+    background-color: #D3D9E1;
     box-shadow: inset 0px 0px 0px 0.75em white;
     transform: translate(3.65em, 0.25em);
   }

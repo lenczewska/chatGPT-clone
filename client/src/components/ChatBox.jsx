@@ -4,9 +4,12 @@ import Message from "./Message";
 import stop_icon from "../../public/stop_icon.jpg";
 import darkForWhite from "../assets/darkForWhite.png";
 import whiteForDark from "../assets/whiteForDark.png";
+import ModeSelect from "./ui/select";
+import SendBtn from "./ui/sendBtn"
+
 
 const ChatBox = () => {
-  const { selectedChat, theme } = useAppContext();
+  const { selectedChat, theme, handleThemeToggle } = useAppContext(); // ← добавь handleThemeToggle
 
   const containerRef = useRef(null);
 
@@ -16,53 +19,30 @@ const ChatBox = () => {
   const [mode, setMode] = useState("text");
   const [isPublished, setIsPublished] = useState(false);
 
-  // Загрузка сообщений при смене чата
   useEffect(() => {
     if (selectedChat) {
       setMessages(selectedChat.messages || []);
     }
   }, [selectedChat]);
 
-  // Автоскролл при новых сообщениях
   useEffect(() => {
-    console.log("=== ДИАГНОСТИКА ===");
-    console.log("selectedChat:", selectedChat);
-    console.log("messages:", messages);
-    console.log("messages.length:", messages.length);
-  }, [selectedChat]);
-
-  useEffect(() => {
-    console.log("=== СКРОЛЛ ===");
-    console.log("containerRef.current:", containerRef.current);
-
     if (containerRef.current) {
-      console.log("scrollHeight:", containerRef.current.scrollHeight);
-      console.log("clientHeight:", containerRef.current.clientHeight);
-      console.log("scrollTop ДО:", containerRef.current.scrollTop);
-
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
-
-      console.log("scrollTop ПОСЛЕ:", containerRef.current.scrollTop);
     }
   }, [messages]);
-  // Обработчик отправки
+
   const onSubmit = async (e) => {
     e.preventDefault();
-
     if (!prompt.trim()) return;
-
     try {
       setLoading(true);
-
       const newMessage = {
         role: "user",
         content: prompt,
         timestamp: new Date().toISOString(),
       };
-
       setMessages((prev) => [...prev, newMessage]);
       setPrompt("");
-
       if (mode === "image" && isPublished) {
       }
     } catch (error) {
@@ -71,6 +51,7 @@ const ChatBox = () => {
       setLoading(false);
     }
   };
+
   const getButtonIcon = () => {
     if (loading) return stop_icon;
     return theme === "dark" ? whiteForDark : darkForWhite;
@@ -89,7 +70,20 @@ const ChatBox = () => {
   );
 
   return (
-    <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40backdrop-blur-sm">
+    <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40 backdrop-blur-sm">
+      {/* ← Переключатель темы в правом верхнем углу */}
+      {/* <div className="flex justify-end mb-2">
+        <div className="flex items-center gap-2 p-2 border dark:border-white/15 rounded-md">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            {theme === "dark" ? "Dark" : "Light"}
+          </span>
+          <Switch
+            checked={theme === "dark"}
+            onCheckedChange={handleThemeToggle}
+          />
+        </div>
+      </div> */}
+
       {/* Chat Container */}
       <div
         ref={containerRef}
@@ -121,28 +115,16 @@ const ChatBox = () => {
       {/* Input Form */}
       <form
         onSubmit={onSubmit}
-        className=" border border-primary dark:border-[#80609F]/50 rounded-full w-full max-w-2xl p-3 pl-4 mx-auto flex gap-4 items-center"
+        className="border border-primary dark:border-[#80609F]/50 rounded-full w-full max-w-2xl p-3 pl-4 mx-auto flex gap-4 items-center"
       >
-        <select
-          value={mode}
-          onChange={(e) => setMode(e.target.value)}
-          className="search-box text-sm pl-3 pr-2 outline-none  text-[#801313] dark:text-white"
-          aria-label="Select mode"
-        >
-          <option className="dark:bg-purple-900" value="text">
-            Text
-          </option>
-          <option className="dark:bg-purple-900" value="image">
-            Image
-          </option>
-        </select>
+        <ModeSelect mode={mode} setMode={setMode} />
 
         <input
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Задайте вопрос..."
-          className=" search-inp flex-1 w-full text-sm outline-none bg-transparent placeholder:text-gray-400"
+          className="search-inp flex-1 w-full text-sm outline-none bg-transparent placeholder:text-gray-400"
           disabled={loading}
           required
         />
@@ -153,11 +135,7 @@ const ChatBox = () => {
           aria-label={loading ? "Остановить генерацию" : "Отправить сообщение"}
           className="disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <img
-            src={getButtonIcon()}
-            alt={loading ? "Stop" : "Send"}
-            className="w-8 cursor-pointer"
-          />
+         <SendBtn/>
         </button>
       </form>
     </div>

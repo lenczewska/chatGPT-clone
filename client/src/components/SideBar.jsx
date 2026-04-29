@@ -25,7 +25,7 @@ import Avatar from "./Avatar";
 import SearchModal from "../components/SearchModal.jsx";
 import useHotKeys from "./hooks/useHotKeys";
 import logoFluxDark from "../../public/logoFluxDark.png";
-import favFluxLogo from "../../public/favFluxLogo.png"
+import favFluxLogo from "../../public/favFluxLogo.png";
 import logoFluxWhite from "../../public/logoFluxWhite.png";
 import { assets } from "@/assets/assets";
 import moment from "moment";
@@ -273,7 +273,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         >
           <div className="flex items-center gap-2 text-sm ">
             {/* <img src={assets.theme_icon} alt="" />
-            <p>Dark Mode</p> */}
+            <p>Dark Mode</p>  */}
           </div>
           <Switch
             checked={theme === "dark"}

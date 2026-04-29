@@ -19,7 +19,8 @@ const Avatar = ({ user, size = 20 }) => {
   return (
     <div
       style={{ width: size, height: size }}
-      className="rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold text-xs "
+      className="rounded-full bg-[#4a3a6b] flex items-center justify-center
+       text-[#fff] font-semibold text-xs "
     >
       {firstLetter}
     </div>
