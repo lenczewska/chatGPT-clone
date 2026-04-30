@@ -65,13 +65,13 @@ const StyledWrapper = styled.div`
     border-radius: 50%;
     box-shadow: inset 0px 0px 0px 0.75em #434548;
     transition:
-      background-color #D3D9E1,
+      background-color #6D5FB9,
       border-color 250ms,
       transform 500ms cubic-bezier(0.26, 2, 0.46, 0.71);
   }
 
   .toggle-checkbox:checked ~ .toggle-slot .toggle-button {
-    background-color: #D3D9E1;
+    background-color: #6D5FB9;
     box-shadow: inset 0px 0px 0px 0.75em white;
     transform: translate(3.65em, 0.25em);
   }
