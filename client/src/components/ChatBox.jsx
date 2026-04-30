@@ -101,7 +101,7 @@ const ChatBox = () => {
       {/* Input Form */}
       <form
         onSubmit={onSubmit}
-        className="border border-primary dark:border-[#80609F]/50 rounded-full w-full max-w-2xl p-2 sm:p-3 sm:pl-4 mx-auto flex gap-2 sm:gap-4 items-center bg-white/80 dark:bg-black/30 backdrop-blur-md"
+        className="border border-primary dark:border-[#80609F]/50 rounded-full w-full max-w-2xl p-2 sm:p-3 sm:pl-4 mx-auto flex gap-2 sm:gap-4 items-center  dark:bg-gray-300 backdrop-blur-md"
       >
         <Select mode={mode} setMode={setMode} theme={theme} />
         <input
@@ -109,7 +109,9 @@ const ChatBox = () => {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Задайте вопрос..."
-          className="search-inp flex-1 w-full text-xs sm:text-sm outline-none bg-transparent placeholder:text-gray-400 px-1 sm:px-2"
+          className="search-inp flex-1 w-full text-xs sm:text-sm outline-none bg-transparent 
+             placeholder:text-gray-400
+             px-1 sm:px-2"
           disabled={loading}
           required
         />

@@ -46,7 +46,7 @@ const StyledWrapper = styled.div`
     font-size: 10px;
     position: relative;
     height: 3em;
-    width: 6.5em;
+    width: 6.3em;
     border: 0px solid transparent;
     border-radius: 10em;
     background-color:  #D3D9E1;
@@ -54,24 +54,21 @@ const StyledWrapper = styled.div`
   }
 
   .toggle-checkbox:checked ~ .toggle-slot {
-    background-color: #6D5FB9;
+    background-color: #4a3a6b;
   }
 
   .toggle-button {
     transform: translate(0.3em, 0.25em);
     position: absolute;
-    height: 2.5em;
-    width: 2.5em;
+    height: 2.3em;
+    width: 2.3em;
     border-radius: 50%;
-    box-shadow: inset 0px 0px 0px 0.75em #434548;
-    transition:
-      background-color #6D5FB9,
-      border-color 250ms,
-      transform 500ms cubic-bezier(0.26, 2, 0.46, 0.71);
+    box-shadow: inset 0px 0px 0px 0.75em #000;
+      background-color #000,
   }
 
   .toggle-checkbox:checked ~ .toggle-slot .toggle-button {
-    background-color: #6D5FB9;
+    background-color:#4a3a6b;
     box-shadow: inset 0px 0px 0px 0.75em white;
     transform: translate(3.65em, 0.25em);
   }

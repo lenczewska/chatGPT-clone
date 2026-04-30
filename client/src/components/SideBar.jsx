@@ -32,6 +32,7 @@ import moment from "moment";
 import "moment/locale/ru";
 import Switch from "./ui/switch";
 import LogOut from "./ui/logout";
+import Version from "./ui/version";
 
 moment.locale("ru");
 
@@ -164,7 +165,9 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                         onClick={() => setIsSearchOpen((prev) => !prev)}
                       >
                         <Search />
-                        <span hidden={state === "collapsed"}>Поиск в чатах</span>
+                        <span hidden={state === "collapsed"}>
+                          Поиск в чатах
+                        </span>
                       </SidebarMenuButton>
                     </TooltipTrigger>
                     <TooltipContent
@@ -248,25 +251,27 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
 
         <div
-          className="flex items-center justify-between gap-2 p-2 mt-1 border dark:border-white/15 rounded-md ml-1 mr-1"
-          hidden={state === "collapsed"}
+          className="group flex items-center justify-between gap-3 p-2 mt-3  
+             border border-gray-200 
+             dark:border-white/15 
+             rounded-md cursor-pointer 
+             hover:bg-gray-100 dark:hover:bg-[#57317C]/20"
         >
-          <div className="flex items-center gap-2 text-sm" />
-          <Switch
-            checked={theme === "dark"}
-            onCheckedChange={handleThemeToggle}
-          />
-        </div>
-
-        <div className="group flex items-center justify-between gap-3 p-2 mt-3 mr-1 ml-1 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20">
           <Avatar user={user} isDark={theme === "dark"} />
           {state !== "collapsed" && <LogOut isDark={theme === "dark"} />}
         </div>
       </SidebarContent>
 
-      <SidebarFooter>
-        <div className="text-xs text-sidebar-foreground/50 px-2 group-data-[collapsible=icon]:hidden">
-          Version 1.0.0
+      <SidebarFooter className="    ">
+        <div
+          className="flex gap-25 group items-center justify-between w-full pl-1 pr-1 pt-1 pb-1 mt-1 mr-1 border dark:border-white/15 rounded-md "
+          hidden={state === "collapsed"}
+        >
+          <Version theme={theme} />
+          <Switch
+            checked={theme === "dark"}
+            onCheckedChange={handleThemeToggle}
+          />
         </div>
       </SidebarFooter>
     </Sidebar>
