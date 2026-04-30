@@ -11,7 +11,7 @@ const SearchModal = ({ open, onOpenChange, onSearch }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/50 backdrop-blur-sm" />
-      <DialogContent className="sm:max-w-[500px]  ">
+      <DialogContent className="max-w-[95vw] sm:max-w-125">
         <Input
           autoFocus
           placeholder="Поиск в чатах..."

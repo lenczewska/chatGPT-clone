@@ -1,9 +1,10 @@
 import React from "react";
 
-const Avatar = ({ user, size = 20 }) => {
-  const firstLetter = user?.name?.charAt(0).toUpperCase() 
-    || user?.email?.charAt(0).toUpperCase() 
-    || "A";
+const Avatar = ({ user, size = 20, isDark }) => {
+  const firstLetter =
+    user?.name?.charAt(0).toUpperCase() ||
+    user?.email?.charAt(0).toUpperCase() ||
+    "A";
 
   if (user?.avatar) {
     return (
@@ -19,8 +20,7 @@ const Avatar = ({ user, size = 20 }) => {
   return (
     <div
       style={{ width: size, height: size }}
-      className="rounded-full bg-[#4a3a6b] flex items-center justify-center
-       text-[#fff] font-semibold text-xs "
+      className={`rounded-full flex items-center justify-center text-white font-semibold text-xs ${isDark ? "bg-[#4a3a6b]" : "bg-black"}`}
     >
       {firstLetter}
     </div>

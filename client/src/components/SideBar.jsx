@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Image, PanelLeft, Search, TextCursor } from "lucide-react";
+import { Image, PanelLeft, Search } from "lucide-react";
 import Plus from "./ui/plus";
 import {
   Sidebar,
@@ -57,21 +57,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
 
   const handleThemeToggle = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
-    console.log("Before:", {
-      theme,
-      newTheme,
-      hasClass: document.documentElement.classList.contains("dark"),
-      allClasses: document.documentElement.className,
-    });
     setTheme(newTheme);
-
-    setTimeout(() => {
-      console.log("After:", {
-        theme: newTheme,
-        hasClass: document.documentElement.classList.contains("dark"),
-        allClasses: document.documentElement.className,
-      });
-    }, 200);
   };
 
   const handleChatClick = (chat) => {
@@ -119,7 +105,6 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
             />
           </Link>
           {state === "collapsed" ? (
-            // Кнопка с логотипом, открывает сайдбар
             <button
               onClick={toggleSidebar}
               className="rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
@@ -128,7 +113,6 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
               <img src={favFluxLogo} alt="Logo" className="h-6 w-6" />
             </button>
           ) : (
-            // Кнопка с иконкой PanelLeft, закрывает сайдбар
             <button
               onClick={toggleSidebar}
               className="rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
@@ -149,16 +133,16 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <SidebarMenuButton
+                        className="cursor-pointer"
                         onClick={() => {
                           navigate("/");
                           setIsMenuOpen(false);
                         }}
                       >
-                        <Plus className="cursor-pointer" />
-                        <span className="cursor-pointer">Новый чат</span>
+                        <Plus />
+                        <span>Новый чат</span>
                       </SidebarMenuButton>
                     </TooltipTrigger>
-
                     <TooltipContent
                       side="right"
                       align="center"
@@ -176,15 +160,11 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <SidebarMenuButton
+                        className="cursor-pointer"
                         onClick={() => setIsSearchOpen((prev) => !prev)}
                       >
-                        <Search className="cursor-pointer" />
-                        <span
-                          className="cursor-pointer"
-                          hidden={state === "collapsed"}
-                        >
-                          Поиск в чатах
-                        </span>
+                        <Search />
+                        <span hidden={state === "collapsed"}>Поиск в чатах</span>
                       </SidebarMenuButton>
                     </TooltipTrigger>
                     <TooltipContent
@@ -198,6 +178,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                   </Tooltip>
                 </TooltipProvider>
               </SidebarMenuItem>
+
               <SearchModal
                 open={isSearchOpen}
                 onOpenChange={setIsSearchOpen}
@@ -206,14 +187,15 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
 
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  className="cursor-pointer"
                   onClick={() => {
                     navigate("/community");
                     setIsMenuOpen(false);
                   }}
                   isActive={location.pathname === "/image"}
                 >
-                  <Image className="cursor-pointer" />
-                  <span className="cursor-pointer">Изображения</span>
+                  <Image />
+                  <span>Изображения</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -225,7 +207,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         >
           <span>Ваши чаты</span>
         </div>
-        {/* chats history */}
+
         <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
           {chats
             .filter((chat) => {
@@ -236,7 +218,6 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
             })
             .map((chat) => {
               const firstMessage = chat.messages?.[0]?.content;
-
               return (
                 <div
                   key={chat._id}
@@ -249,12 +230,10 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                     <p className="truncate font-medium">
                       {firstMessage ? firstMessage.slice(0, 32) : chat.name}
                     </p>
-
                     <span className="text-xs text-gray-500 dark:text-[#B1A6C0]">
                       {formatTime(chat.updatedAt || chat.createdAt)}
                     </span>
                   </div>
-
                   {hoveredChatId === chat._id && (
                     <img
                       src={assets.bin_icon}
@@ -267,24 +246,21 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
               );
             })}
         </div>
+
         <div
-          className="flex items-center justify-between gap-2 p-2 mt-1 border dark:border-white/15 rounded-md  ml-1 mr-1  "
+          className="flex items-center justify-between gap-2 p-2 mt-1 border dark:border-white/15 rounded-md ml-1 mr-1"
           hidden={state === "collapsed"}
         >
-          <div className="flex items-center gap-2 text-sm ">
-            {/* <img src={assets.theme_icon} alt="" />
-            <p>Dark Mode</p>  */}
-          </div>
+          <div className="flex items-center gap-2 text-sm" />
           <Switch
             checked={theme === "dark"}
             onCheckedChange={handleThemeToggle}
           />
         </div>
 
-        {/* user acc  */}
         <div className="group flex items-center justify-between gap-3 p-2 mt-3 mr-1 ml-1 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20">
-          <Avatar user={user} />
-          {state !== "collapsed" && <LogOut />}
+          <Avatar user={user} isDark={theme === "dark"} />
+          {state !== "collapsed" && <LogOut isDark={theme === "dark"} />}
         </div>
       </SidebarContent>
 

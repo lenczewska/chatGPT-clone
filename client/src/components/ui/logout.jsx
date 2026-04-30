@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-const LogOut = () => {
+const LogOut = ({ isDark }) => {
   return (
-    <StyledWrapper>
+    <StyledWrapper $isDark={isDark}>
       <button className="Btn">
         <div className="sign">
           <svg viewBox="0 0 512 512">
@@ -37,10 +37,9 @@ const StyledWrapper = styled.div`
     overflow: hidden;
     transition-duration: 0.3s;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
-    background-color: #4a3a6b;
+    background-color: ${({ $isDark }) => $isDark ? "#4a3a6b" : "#000000"};
   }
 
-  /* plus sign */
   .sign {
     width: 100%;
     transition-duration: 0.3s;
@@ -56,7 +55,7 @@ const StyledWrapper = styled.div`
   .sign svg path {
     fill: var(--af-white);
   }
-  /* text */
+
   .text {
     position: absolute;
     right: 0%;
@@ -67,7 +66,7 @@ const StyledWrapper = styled.div`
     font-weight: 600;
     transition-duration: 0.3s;
   }
-  /* hover effect on button width */
+
   .Btn:hover {
     width: 125px;
     border-radius: 5px;
@@ -79,14 +78,14 @@ const StyledWrapper = styled.div`
     transition-duration: 0.3s;
     padding-left: 20px;
   }
-  /* hover effect button's text */
+
   .Btn:hover .text {
     opacity: 1;
     width: 70%;
     transition-duration: 0.3s;
     padding-right: 10px;
   }
-  /* button click effect*/
+
   .Btn:active {
     transform: translate(2px, 2px);
   }

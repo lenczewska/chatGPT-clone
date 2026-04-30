@@ -4,9 +4,8 @@ import Message from "./Message";
 import stop_icon from "../../public/stop_icon.jpg";
 import darkForWhite from "../assets/darkForWhite.png";
 import whiteForDark from "../assets/whiteForDark.png";
-import ModeSelect from "./ui/select";
-import SendBtn from "./ui/sendBtn"
-
+import Select from "./ui/select";
+import SendBtn from "./ui/sendBtn";
 
 const ChatBox = () => {
   const { selectedChat, theme, handleThemeToggle } = useAppContext(); // ← добавь handleThemeToggle
@@ -70,29 +69,16 @@ const ChatBox = () => {
   );
 
   return (
-    <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40 backdrop-blur-sm">
-      {/* ← Переключатель темы в правом верхнем углу */}
-      {/* <div className="flex justify-end mb-2">
-        <div className="flex items-center gap-2 p-2 border dark:border-white/15 rounded-md">
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {theme === "dark" ? "Dark" : "Light"}
-          </span>
-          <Switch
-            checked={theme === "dark"}
-            onCheckedChange={handleThemeToggle}
-          />
-        </div>
-      </div> */}
-
+    <div className="flex-1 flex flex-col justify-between m-2 sm:m-4 md:m-8 xl:mx-30 max-md:mt-14 2xl:pr-40 backdrop-blur-sm min-h-[60vh] max-w-full">
       {/* Chat Container */}
       <div
         ref={containerRef}
-        className="flex-1 mb-8 overflow-y-scroll scrollbar-hide max-h-[70vh]"
+        className="flex-1 mb-4 sm:mb-8 overflow-y-scroll scrollbar-hide max-h-[60vh] sm:max-h-[70vh] px-1 sm:px-0"
       >
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center">
             <p
-              className={`sm:text-7xl mb-6 text-center ${theme === "dark" ? "text-white" : "text-black"}`}
+              className={`text-2xl sm:text-4xl md:text-6xl lg:text-7xl mb-6 text-center ${theme === "dark" ? "text-white" : "text-black"}`}
             >
               {placeholder}
             </p>
@@ -115,16 +101,15 @@ const ChatBox = () => {
       {/* Input Form */}
       <form
         onSubmit={onSubmit}
-        className="border border-primary dark:border-[#80609F]/50 rounded-full w-full max-w-2xl p-3 pl-4 mx-auto flex gap-4 items-center"
+        className="border border-primary dark:border-[#80609F]/50 rounded-full w-full max-w-2xl p-2 sm:p-3 sm:pl-4 mx-auto flex gap-2 sm:gap-4 items-center bg-white/80 dark:bg-black/30 backdrop-blur-md"
       >
-        <ModeSelect mode={mode} setMode={setMode} />
-
+        <Select mode={mode} setMode={setMode} theme={theme} />
         <input
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Задайте вопрос..."
-          className="search-inp flex-1 w-full text-sm outline-none bg-transparent placeholder:text-gray-400"
+          className="search-inp flex-1 w-full text-xs sm:text-sm outline-none bg-transparent placeholder:text-gray-400 px-1 sm:px-2"
           disabled={loading}
           required
         />
@@ -133,9 +118,9 @@ const ChatBox = () => {
           type="submit"
           disabled={loading || !prompt.trim()}
           aria-label={loading ? "Остановить генерацию" : "Отправить сообщение"}
-          className="disabled:opacity-50 disabled:cursor-not-allowed"
+          className="disabled:opacity-50 disabled:cursor-not-allowed w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center"
         >
-         <SendBtn/>
+          <SendBtn theme={theme} />
         </button>
       </form>
     </div>
