@@ -251,11 +251,12 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
 
         <div
-          className="group flex items-center justify-between gap-3 p-2 mt-3  
-             border border-gray-200 
-             dark:border-white/15 
-             rounded-md cursor-pointer 
-             hover:bg-gray-100 dark:hover:bg-[#57317C]/20"
+          className="group flex items-center justify-between mr-2 ml-2 gap-3 p-2 mt-3  
+     border
+     dark:border-white/15 
+     rounded-md cursor-pointer 
+     hover:bg-gray-100 dark:hover:bg-[#57317C]/20"
+          style={{ borderColor: theme === "dark" ? undefined : "#E5E5E5" }}
         >
           <Avatar user={user} isDark={theme === "dark"} />
           {state !== "collapsed" && <LogOut isDark={theme === "dark"} />}
@@ -266,6 +267,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         <div
           className="flex gap-25 group items-center justify-between w-full pl-1 pr-1 pt-1 pb-1 mt-1 mr-1 border dark:border-white/15 rounded-md "
           hidden={state === "collapsed"}
+          style={{ borderColor: theme === "dark" ? undefined : "#E5E5E5" }}
         >
           <Version theme={theme} />
           <Switch

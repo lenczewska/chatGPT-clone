@@ -5,7 +5,7 @@ const Button = ({ theme }) => {
     <button className="group flex items-center gap-1 px-3 py-1 cursor-pointer font-semibold tracking-widest rounded-md duration-300 hover:gap-2 absolute z-20">
       <svg
         className={`w-7 h-7 transition-transform duration-300 group-hover:-rotate-45 
-              ${theme === "dark" ? "text-[#9C30BD]" : "text-[#000]"}`}
+              ${theme === "dark" ? "text-[#9C30BD]" : "text-black"}`}
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
