@@ -33,8 +33,7 @@ import "moment/locale/ru";
 import Switch from "./ui/switch";
 import LogOut from "./ui/logout";
 import Version from "./ui/version";
-
-moment.locale("ru");
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
   const { chats, theme, setTheme, user, setSelectedChat } = useAppContext();
@@ -251,7 +250,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
 
         <div
-          className="group flex items-center justify-between mr-2 ml-2 gap-3 p-2 mt-3  
+          className="group flex items-center justify-between mr-2 ml-2 gap-3 p-1 mt-3  
      border
      dark:border-white/15 
      rounded-md cursor-pointer 
@@ -265,11 +264,12 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
 
       <SidebarFooter className="    ">
         <div
-          className="flex gap-25 group items-center justify-between w-full pl-1 pr-1 pt-1 pb-1 mt-1 mr-1 border dark:border-white/15 rounded-md "
+          className="flex  group items-center justify-between w-full pl-1 pr-1 pt-1 pb-1  border dark:border-white/15 rounded-md "
           hidden={state === "collapsed"}
           style={{ borderColor: theme === "dark" ? undefined : "#E5E5E5" }}
         >
           <Version theme={theme} />
+          <LanguageSwitcher theme={theme} />
           <Switch
             checked={theme === "dark"}
             onCheckedChange={handleThemeToggle}

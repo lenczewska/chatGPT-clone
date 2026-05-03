@@ -45,8 +45,8 @@ const StyledWrapper = styled.div`
   .toggle-slot {
     font-size: 10px;
     position: relative;
-    height: 3em;
-    width: 6.3em;
+    height: 2.5em;
+    width: 6em;
     border: 0px solid transparent;
     border-radius: 10em;
     background-color:  #D3D9E1;
@@ -60,8 +60,8 @@ const StyledWrapper = styled.div`
   .toggle-button {
     transform: translate(0.3em, 0.25em);
     position: absolute;
-    height: 2.3em;
-    width: 2.3em;
+    height: 2em;
+    width: 2em;
     border-radius: 50%;
     box-shadow: inset 0px 0px 0px 0.75em #000;
       background-color #000,
