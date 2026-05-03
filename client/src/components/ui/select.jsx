@@ -27,13 +27,14 @@ const select = ({ mode, setMode, theme }) => {
   return (
     <div ref={ref} className="relative">
       <button
+        
         type="button"
         onClick={() => setOpen(!open)}
         style={{
           backgroundColor: theme === "dark" ? "#6D5FB9" : "#000000",
           color: "white",
         }}
-        className="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full transition-all duration-200 hover:opacity-80"
+        className="flex items-center cursor-pointer gap-1.5 text-sm font-medium px-3 py-1.5 rounded-full transition-all duration-200 hover:opacity-80"
       >
         <span>{selected?.icon}</span>
         <span>{selected?.label}</span>
@@ -45,7 +46,7 @@ const select = ({ mode, setMode, theme }) => {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 z-50 min-w-[100px] rounded-xl overflow-hidden shadow-lg border border-purple-800 dark:border-white/10 bg-white dark:bg-[#1e1028]">
+        <div className="absolute top-full left-0 mt-1 z-50 min-w-21 rounded-xl overflow-hidden shadow-lg border border-purple-800 dark:border-white/10 bg-white dark:bg-[#1e1028]">
           {options
             .filter((option) => option.value !== mode)
             .map((option) => (
@@ -56,10 +57,10 @@ const select = ({ mode, setMode, theme }) => {
                   setMode(option.value);
                   setOpen(false);
                 }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm !text-white dark:text-white hover:bg-white/10 transition-colors duration-150"
+                className="w-10 flex items-center gap-2 px-3 py-2 text-sm text-white!  dark:text-white hover:bg-white/10 transition-colors duration-150"
               >
-                <span>{option.icon}</span>
-                <span>{option.label}</span>
+                <span className="cursor-pointer">{option.icon}</span>
+                <span className="cursor-pointer">{option.label}</span>
               </button>
             ))}
         </div>

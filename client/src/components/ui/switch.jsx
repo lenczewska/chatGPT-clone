@@ -6,12 +6,12 @@ const Switch = ({ checked, onCheckedChange }) => {
     <StyledWrapper>
       <label>
         <input
-          className="toggle-checkbox"
+          className="toggle-checkbox  "
           type="checkbox"
           checked={checked}
           onChange={() => onCheckedChange(!checked)}
         />
-        <div className="toggle-slot">
+        <div className="toggle-slot cursor-pointer ">
           <div className="sun-icon-wrapper">
             <div
               className="iconify sun-icon"
