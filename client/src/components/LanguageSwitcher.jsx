@@ -5,6 +5,10 @@ const LanguageSwitcher = ({ theme }) => {
   const { i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("language", lang);
+  };
 
   const options = [
     { value: "ru", label: "RU" },
@@ -53,7 +57,7 @@ const LanguageSwitcher = ({ theme }) => {
                 key={option.value}
                 type="button"
                 onClick={() => {
-                  i18n.changeLanguage(option.value);
+                  changeLanguage(option.value);
                   setOpen(false);
                 }}
                 className="w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-[12px] text-white! dark:text-white hover:bg-white/10 transition-colors duration-150"

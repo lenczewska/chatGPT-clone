@@ -1,5 +1,5 @@
 import { useAppContext } from "@/context/AppContext";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import Message from "./Message";
 import stop_icon from "../../public/stop_icon.jpg";
 import darkForWhite from "../assets/darkForWhite.png";
@@ -63,17 +63,12 @@ const ChatBox = () => {
     return theme === "dark" ? whiteForDark : darkForWhite;
   };
 
-  const phrases = [
-    "Ask me anything!",
-    "What's on your mind?",
-    "How can I help?",
-    "What would you like to know?",
-    "Let's talk!",
-  ];
+  const phrases = t("chatbox.phrases", { returnObjects: true });
 
-  const [placeholder] = useState(
-    () => phrases[Math.floor(Math.random() * phrases.length)],
-  );
+  const placeholder = useMemo(() => {
+    const phrases = t("chatbox.phrases", { returnObjects: true });
+    return phrases[Math.floor(Math.random() * phrases.length)];
+  }, [i18n.language]);
 
   return (
     <div className="flex-1 flex flex-col justify-between m-2 sm:m-4 md:m-8 xl:mx-30 max-md:mt-14 2xl:pr-40 backdrop-blur-sm min-h-[60vh] max-w-full">
@@ -85,7 +80,7 @@ const ChatBox = () => {
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center">
             <p
-              className={`text-2xl sm:text-4xl md:text-6xl lg:text-7xl mb-6 text-center ${theme === "dark" ? "text-white" : "text-black"}`}
+              className={`text-xl sm:text-4xl md:text-6xl lg:text-7xl mb-6 text-center ${theme === "dark" ? "text-white" : "text-black"}`}
             >
               {placeholder}
             </p>
@@ -116,7 +111,7 @@ const ChatBox = () => {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder={t("chatbox.placeholder")}
-          className="search-inp flex-1 w-full text-xs sm:text-sm outline-none bg-transparent 
+          className="search-inp flex-1 w-full text-xs text-black sm:text-sm outline-none bg-transparent 
              placeholder:text-gray-400
              px-1 sm:px-2"
           disabled={loading}

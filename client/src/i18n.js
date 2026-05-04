@@ -10,9 +10,16 @@ i18n.use(initReactI18next).init({
         "sidebar.images": "Images",
         "sidebar.yourChats": "Your chats",
         "sidebar.yesterday": "Yesterday",
-        "chatbox.placeholder": "Write a message...",
         "select.text": "Text",
         "select.image": "Image",
+        "chatbox.placeholder": "Write a message...",
+        "chatbox.phrases": [
+          "Ask me anything!",
+          "What's on your mind?",
+          "How can I help?",
+          "What would you like to know?",
+          "Let's talk!",
+        ],
       },
     },
 
@@ -23,9 +30,16 @@ i18n.use(initReactI18next).init({
         "sidebar.images": "Изображения",
         "sidebar.yourChats": "Ваши чаты",
         "sidebar.yesterday": "Вчера",
-        "chatbox.placeholder": "Задайте вопрос...",
         "select.text": "Текст",
         "select.image": "Фото",
+        "chatbox.placeholder": "Задайте вопрос...",
+        "chatbox.phrases": [
+          "Задайте вопрос!",
+          "О чём думаете?",
+          "Чем могу помочь?",
+          "Что хотите узнать?",
+          "Давайте общаться!",
+        ],
       },
     },
     az: {
@@ -35,17 +49,22 @@ i18n.use(initReactI18next).init({
         "sidebar.images": "Şəkillər",
         "sidebar.yourChats": "Çatlarınız",
         "sidebar.yesterday": "Dünən",
-        "chatbox.placeholder": "Sualınızı yazın...",
         "select.text": "Mətn",
         "select.image": "Şəkil",
+        "chatbox.placeholder": "Sualınızı yazın...",
+        "chatbox.phrases": [
+          "Sual verin!",
+          "Nə düşünürsünüz?",
+          "Necə kömək edə bilərəm?",
+          "Nə bilmək istəyirsiniz?",
+          "Gəlin danışaq!",
+        ],
       },
     },
   },
-  lng: "ru",
+  lng: localStorage.getItem("language") || "ru", 
   fallbackLng: "en",
-  interpolation: {
-    escapeValue: false,
-  },
+  interpolation: { escapeValue: false },
 });
 
 export default i18n;
