@@ -28,14 +28,17 @@ import logoFluxDark from "../../public/logoFluxDark.png";
 import favFluxLogo from "../../public/favFluxLogo.png";
 import logoFluxWhite from "../../public/logoFluxWhite.png";
 import { assets } from "@/assets/assets";
-import moment from "moment";
-import "moment/locale/ru";
 import Switch from "./ui/switch";
 import LogOut from "./ui/logout";
 import Version from "./ui/version";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "react-i18next";
+import moment from "moment";
+import "moment/locale/ru";
+import "moment/locale/az";
 
 const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
+  const { t, i18n } = useTranslation();
   const { chats, theme, setTheme, user, setSelectedChat } = useAppContext();
   const [search] = useState("");
   const location = useLocation();
@@ -43,6 +46,10 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
   const { toggleSidebar, state } = useSidebar();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [hoveredChatId, setHoveredChatId] = useState(null);
+
+  useEffect(() => {
+    moment.locale(i18n.language);
+  }, [i18n.language]);
 
   const handleSearchModal = (value) => {
     console.log(value);
@@ -82,7 +89,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
       return momentDate.fromNow();
     } else if (diffInDays < 7) {
       return momentDate.calendar(null, {
-        lastDay: "[Вчера]",
+        lastDay: `[${t("sidebar.yesterday")}]`,
         lastWeek: "dddd",
         sameElse: "DD.MM.YYYY",
       });
@@ -140,7 +147,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                         }}
                       >
                         <Plus />
-                        <span>Новый чат</span>
+                        <span>{t("sidebar.newChat")}</span>
                       </SidebarMenuButton>
                     </TooltipTrigger>
                     <TooltipContent
@@ -165,7 +172,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                       >
                         <Search />
                         <span hidden={state === "collapsed"}>
-                          Поиск в чатах
+                          {t("sidebar.search")}
                         </span>
                       </SidebarMenuButton>
                     </TooltipTrigger>
@@ -197,7 +204,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                   isActive={location.pathname === "/image"}
                 >
                   <Image />
-                  <span>Изображения</span>
+                  <span>{t("sidebar.images")}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -207,7 +214,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         <div
           className={`ml-4 mr-4 text-sm text-gray-500 border-t pt-3 ${state === "collapsed" ? "hidden" : ""}`}
         >
-          <span>Ваши чаты</span>
+          <span>{t("sidebar.yourChats")}</span>
         </div>
 
         <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
@@ -250,11 +257,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
 
         <div
-          className="group flex items-center justify-between mr-2 ml-2 gap-3 p-1 mt-3  
-     border
-     dark:border-white/15 
-     rounded-md cursor-pointer 
-     hover:bg-gray-100 dark:hover:bg-[#57317C]/20"
+          className="group flex items-center justify-between mr-2 ml-2 gap-3 p-1 mt-3 border dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20"
           style={{ borderColor: theme === "dark" ? undefined : "#E5E5E5" }}
         >
           <Avatar user={user} isDark={theme === "dark"} />
@@ -262,9 +265,9 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
       </SidebarContent>
 
-      <SidebarFooter className="    ">
+      <SidebarFooter>
         <div
-          className="flex  group items-center justify-between w-full pl-1 pr-1 pt-1 pb-1  border dark:border-white/15 rounded-md "
+          className="flex group items-center justify-between w-full pl-1 pr-1 pt-1 pb-1 border dark:border-white/15 rounded-md"
           hidden={state === "collapsed"}
           style={{ borderColor: theme === "dark" ? undefined : "#E5E5E5" }}
         >
@@ -274,6 +277,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
             checked={theme === "dark"}
             onCheckedChange={handleThemeToggle}
           />
+        
         </div>
       </SidebarFooter>
     </Sidebar>

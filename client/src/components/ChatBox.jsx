@@ -6,17 +6,24 @@ import darkForWhite from "../assets/darkForWhite.png";
 import whiteForDark from "../assets/whiteForDark.png";
 import Select from "./ui/select";
 import SendBtn from "./ui/sendBtn";
+import { useTranslation } from "react-i18next";
+import moment from "moment";
+import "moment/locale/ru";
+import "moment/locale/az";
 
 const ChatBox = () => {
   const { selectedChat, theme, handleThemeToggle } = useAppContext(); // ← добавь handleThemeToggle
-
+  const { t, i18n } = useTranslation();
   const containerRef = useRef(null);
-
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [mode, setMode] = useState("text");
   const [isPublished, setIsPublished] = useState(false);
+
+  useEffect(() => {
+    moment.locale(i18n.language);
+  }, [i18n.language]);
 
   useEffect(() => {
     if (selectedChat) {
@@ -108,7 +115,7 @@ const ChatBox = () => {
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Задайте вопрос..."
+          placeholder={t("chatbox.placeholder")}
           className="search-inp flex-1 w-full text-xs sm:text-sm outline-none bg-transparent 
              placeholder:text-gray-400
              px-1 sm:px-2"

@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const select = ({ mode, setMode, theme }) => {
   console.log("select theme:", theme);
 
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const { t } = useTranslation();
 
   const options = [
-    { value: "text", label: "Text", icon: "✦" },
-    { value: "image", label: "Image", icon: "⬡" },
+    { value: "text", label: t("select.text"), icon: "✦" },
+    { value: "image", label: t("select.image"), icon: "⬡" },
   ];
 
   const selected = options.find((o) => o.value === mode);
@@ -27,7 +29,6 @@ const select = ({ mode, setMode, theme }) => {
   return (
     <div ref={ref} className="relative">
       <button
-        
         type="button"
         onClick={() => setOpen(!open)}
         style={{
