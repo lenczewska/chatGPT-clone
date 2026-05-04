@@ -25,7 +25,7 @@ const LanguageSwitcher = ({ theme }) => {
   }, []);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative cursor-pointer ">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -33,7 +33,7 @@ const LanguageSwitcher = ({ theme }) => {
           backgroundColor: theme === "dark" ? "#4A3A6B" : "#000000",
           color: "white",
         }}
-        className="flex items-center gap-1.5 text-[12px] font-medium px-3 py-1 rounded-full transition-all duration-200 hover:opacity-80"
+        className="flex items-center gap-1.5 text-[12px] font-medium px-3 cursor-pointer py-1 rounded-full transition-all duration-200 hover:opacity-80"
       >
         <span>{selected?.icon}</span>
         <span>{selected?.label}</span>
@@ -45,7 +45,7 @@ const LanguageSwitcher = ({ theme }) => {
       </button>
 
       {open && (
-        <div className="absolute bottom-full left-0 mb-1 z-50 min-w-15 rounded-xl overflow-hidden shadow-lg border border-purple-800 dark:border-white/10 bg-white dark:bg-[#1e1028]">
+        <div className="absolute  bottom-full left-0 mb-1 z-50 min-w-15 rounded-xl overflow-hidden shadow-lg border border-purple-800 dark:border-white/10 bg-white dark:bg-[#1e1028]">
           {options
             .filter((o) => o.value !== i18n.language)
             .map((option) => (
@@ -56,7 +56,7 @@ const LanguageSwitcher = ({ theme }) => {
                   i18n.changeLanguage(option.value);
                   setOpen(false);
                 }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-[12px] !text-white dark:text-white hover:bg-white/10 transition-colors duration-150"
+                className="w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-[12px] text-white! dark:text-white hover:bg-white/10 transition-colors duration-150"
               >
                 <span>{option.icon}</span>
                 <span>{option.label}</span>
