@@ -31,6 +31,7 @@ i18n.use(initReactI18next).init({
         ],
         "search.placeholder": "Search in chats...",
         "project.placeholder": "Search projects",
+        "time.justNow": "Just now",
       },
     },
 
@@ -63,6 +64,7 @@ i18n.use(initReactI18next).init({
         ],
         "search.placeholder": "Поиск в чатах...",
         "project.placeholder": "Поиск проектов",
+        "time.justNow": "Только что",
       },
     },
     az: {
@@ -93,6 +95,7 @@ i18n.use(initReactI18next).init({
         ],
         "search.placeholder": "Çatlarda axtarın...",
         "project.placeholder": "Proyektləri axtarin",
+        "time.justNow": "İndi",
       },
     },
   },

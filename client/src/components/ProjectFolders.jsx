@@ -78,7 +78,6 @@ const ProjectFolders = ({ projects = [], onDelete, onToggleStar, onEdit }) => {
               }`}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Star toggle */}
               <button
                 type="button"
                 className={`w-full flex items-center gap-1 px-4 py-2 text-left text-sm border-b rounded-t-lg cursor-pointer transition-colors duration-150 ${
@@ -99,7 +98,6 @@ const ProjectFolders = ({ projects = [], onDelete, onToggleStar, onEdit }) => {
                 Star
               </button>
 
-              {/* Edit */}
               <button
                 type="button"
                 className={`w-full flex gap-2 items-center px-4 py-2 text-left text-sm border-b cursor-pointer transition-colors duration-150 ${
@@ -116,7 +114,6 @@ const ProjectFolders = ({ projects = [], onDelete, onToggleStar, onEdit }) => {
                 Edit
               </button>
 
-              {/* Delete */}
               <button
                 type="button"
                 className={`w-full flex items-center gap-1 px-4 py-2 text-left text-sm rounded-b-lg cursor-pointer transition-colors duration-150 ${

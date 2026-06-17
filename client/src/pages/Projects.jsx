@@ -47,9 +47,10 @@ const Projects = ({}) => {
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{
             border: "1px solid #4A3A6B",
-            color: "white",
+            color: theme === "dark" ? "white" : "black",
             paddingRight: "36px",
           }}
+          className={theme === "dark" ? "placeholder:text-white" : "placeholder:text-black"}
           placeholder={t("project.placeholder")}
         />
         <CiSearch
