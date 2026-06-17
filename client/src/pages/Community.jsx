@@ -1,4 +1,4 @@
-import { dummyPublishedImages } from "@/assets/assets";
+// import { dummyPublishedImages } from "@/assets/assets";
 import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 

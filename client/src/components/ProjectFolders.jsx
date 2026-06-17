@@ -55,7 +55,11 @@ const ProjectFolders = ({ projects = [], onDelete, onToggleStar, onEdit }) => {
                 }}
                 aria-label="Toggle menu"
               >
-                <HiDotsVertical className="w-5 h-6 rounded-[3px] bg-[#35294C] cursor-pointer " />
+                <HiDotsVertical
+                  className={`w-6 h-7 rounded-[3px] pl-0.5 pr-0.5  cursor-pointer  ${
+                    theme === "dark" ? "hover:bg-gray-900" : "hover:bg-gray-200"
+                  }`}
+                />
               </button>
             </div>
 
@@ -84,13 +88,13 @@ const ProjectFolders = ({ projects = [], onDelete, onToggleStar, onEdit }) => {
                 }`}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onToggleStar?.(project.id); 
+                  onToggleStar?.(project.id);
                 }}
               >
                 {project.starred ? (
                   <FaStar className="w-5 text-[#8e6ad4]" />
                 ) : (
-                  <FaRegStar className="w-5 text-gray-400"  /> 
+                  <FaRegStar className="w-5 text-gray-400" />
                 )}
                 Star
               </button>
