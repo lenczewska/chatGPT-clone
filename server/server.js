@@ -1,5 +1,6 @@
+import { fileURLToPath } from "node:url";
+import dotenv from "dotenv";
 import express from "express";
-import "dotenv/config";
 import cors from "cors";
 import connectDB from "./configs/db.js";
 import userRouter from "./routes/userRoutes.js";
@@ -7,6 +8,10 @@ import chatRouter from "./routes/chatRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import openrouterRouter from "./routes/openrouterRoutes.js";
+
+dotenv.config({
+  path: fileURLToPath(new URL("./.env", import.meta.url)),
+});
 
 const app = express();
 

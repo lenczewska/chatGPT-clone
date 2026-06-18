@@ -46,6 +46,7 @@ const ChatBox = () => {
 
     try {
       setLoading(true);
+
       const newMessage = {
         role: "user",
         content:
@@ -55,6 +56,24 @@ const ChatBox = () => {
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, newMessage]);
+
+      // запрос к серверу
+      const res = await fetch("http://localhost:3000/api/openrouter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: newMessage.content }),
+      });
+
+      const data = await res.json();
+
+      // сообщение ассистента
+      const botMessage = {
+        role: "assistant",
+        content: data.answer,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, botMessage]);
+
       setPrompt("");
       setFile(null);
       setFileDescription("");
