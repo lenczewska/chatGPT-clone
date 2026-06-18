@@ -40,8 +40,8 @@ const Projects = ({}) => {
   const starredProjects = projects.filter((p) => p.starred);
 
   return (
-    <div className="form pl-18 pr-18 pt-10">
-      <div style={{ position: "relative" }}>
+    <div className="w-full max-w-6xl mx-auto px-3 py-6 sm:px-4 sm:py-8 md:px-6 lg:px-8">
+      <div className="relative max-w-2xl">
         <Input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -66,9 +66,8 @@ const Projects = ({}) => {
         />
       </div>
 
-      {/* Новый проект */}
       <div
-        className="inline-flex items-center gap-1 pl-2 pr-2 rounded-[7px] mt-10 cursor-pointer"
+        className="mt-6 inline-flex cursor-pointer items-center gap-1 rounded-[7px] px-3 py-2 sm:mt-8"
         style={{
           backgroundColor: theme === "dark" ? "transparent" : "#f3f4f6",
           border: theme === "dark" ? "1px solid #4A3A6B" : "none",
@@ -77,7 +76,7 @@ const Projects = ({}) => {
       >
         <Plus className="cursor-pointer" />
         <h2
-          className="text-lg p-1"
+          className="p-1 text-base sm:text-lg"
           style={{ color: theme === "dark" ? "white" : "black" }}
         >
           {t("projects.new")}
@@ -90,13 +89,13 @@ const Projects = ({}) => {
         onAdd={handleAddProject}
       />
 
-      <ProjectFolders
-        projects={filteredProjects}
-        onDelete={handleDeleteProject}
-        onToggleStar={toggleStar}
-      />
-
-     
+      <div className="mt-4 sm:mt-6">
+        <ProjectFolders
+          projects={filteredProjects}
+          onDelete={handleDeleteProject}
+          onToggleStar={toggleStar}
+        />
+      </div>
     </div>
   );
 };

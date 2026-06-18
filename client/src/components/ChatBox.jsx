@@ -95,16 +95,15 @@ const ChatBox = () => {
   }, [i18n.language]);
 
   return (
-    <div className="flex-1 flex flex-col justify-between m-2 sm:m-4 md:m-8 xl:mx-30 max-md:mt-14 2xl:pr-40 min-h-[60vh] max-w-full">
-      {/* Chat Container */}
+    <div className="flex min-h-[calc(100vh-6rem)] w-full max-w-6xl mx-auto flex-col px-1 sm:px-2 md:px-4 pb-4">
       <div
         ref={containerRef}
-        className="flex-1 mb-4 sm:mb-8 overflow-y-scroll scrollbar-hide max-h-[60vh] sm:max-h-[70vh] px-1 sm:px-0"
+        className="flex-1 min-h-0 overflow-y-auto px-1 pb-4 sm:px-2"
       >
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center">
+          <div className="flex h-full min-h-[50vh] flex-col items-center justify-center px-4 text-center">
             <p
-              className={`text-xl sm:text-4xl md:text-6xl lg:text-7xl mb-6 text-center ${
+              className={`text-2xl sm:text-4xl md:text-5xl lg:text-6xl mb-6 ${
                 theme === "dark" ? "text-white" : "text-black"
               }`}
             >
@@ -126,16 +125,13 @@ const ChatBox = () => {
         )}
       </div>
 
-      {/* Input Form */}
       <form
         onSubmit={onSubmit}
-        className={`border rounded-full w-full max-w-2xl p-2 sm:p-3 sm:pl-4 mx-auto flex gap-2 sm:gap-4 items-center
-          ${
-            theme === "dark"
-              ? "border-[#80609F]/50 bg-[#0f0f12] text-white"
-              : "border-black bg-white text-black"
-          }
-          shadow-sm`}
+        className={`mx-auto mt-2 flex w-full max-w-3xl items-center gap-2 rounded-full border p-2 sm:p-3 sm:pl-4 ${
+          theme === "dark"
+            ? "border-[#80609F]/50 bg-[#0f0f12] text-white"
+            : "border-black bg-white text-black"
+        } shadow-sm`}
       >
         <Select mode={mode} setMode={setMode} theme={theme} />
 

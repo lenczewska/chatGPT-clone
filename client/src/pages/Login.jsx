@@ -72,10 +72,10 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center ">
+    <div className="flex min-h-[calc(100vh-6rem)] w-full items-center justify-center px-4 sm:px-6">
       <form
         onSubmit={handleSubmit}
-        className=" sm:w-[320px]  w-full text-center border border-gray-300/60 dark:border-gray-700 rounded-2xl px-8 bg-transparent"
+        className="w-full max-w-md rounded-2xl border border-gray-300/60 bg-transparent px-6 py-8 text-center dark:border-gray-700 sm:px-8"
       >
         <h1 className=" login-h text-gray-900 dark:text-white text-3xl mt-10 font-medium">
           {state === "login" ? "Login" : "Sign up"}

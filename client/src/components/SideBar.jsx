@@ -125,28 +125,29 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div
-          className={`flex items-center justify-between px-4 py-4 ${!isMenuOpen && "max-md:-translate-x-full"}`}
-        >
-          <Link to="/" className="group-data-[collapsible=icon]:hidden">
+        <div className="flex items-center justify-between px-3 py-3 sm:px-2 sm:py-2">
+          <Link
+            to="/"
+            className="flex min-w-0 items-center group-data-[collapsible=icon]:hidden"
+          >
             <img
               src={theme === "dark" ? logoFluxWhite : logoFluxDark}
               alt="Logo"
-              className="h-6 cursor-pointer hover:opacity-80 transition-opacity"
+              className="h-8 w-20 max-w-20 shrink-0 object-contain transition-opacity hover:opacity-80"
             />
           </Link>
           {state === "collapsed" ? (
             <button
               onClick={toggleSidebar}
-              className="rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
+              className="ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-sidebar-accent"
               aria-label="Open sidebar"
             >
-              <img src={favFluxLogo} alt="Logo" className="h-6 w-6" />
+              <img src={favFluxLogo} alt="Logo" className="h-6 w-6 object-contain cursor-pointer" />
             </button>
           ) : (
             <button
               onClick={toggleSidebar}
-              className="rounded-lg cursor-pointer hover:bg-sidebar-accent transition-colors ml-auto"
+              className="ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-sidebar-accent"
               aria-label="Toggle sidebar"
             >
               <PanelLeft className="h-5 w-5 text-sidebar-foreground" />
@@ -171,13 +172,15 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                         }}
                       >
                         <Plus />
-                        <span
-                          className={`${
-                            theme === "dark" ? "text-white" : "text-[#888888]"
-                          }`}
-                        >
-                          {t("sidebar.newChat")}
-                        </span>
+                        {state === "expanded" && (
+                          <span
+                            className={`${
+                              theme === "dark" ? "text-white" : "text-[#888888]"
+                            }`}
+                          >
+                            {t("sidebar.newChat")}
+                          </span>
+                        )}
                       </SidebarMenuButton>
                     </TooltipTrigger>
                     <TooltipContent
@@ -186,7 +189,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                       className="bg-gray-200 text-white"
                       hidden={state === "expanded"}
                     >
-                      <p className="text-xs text-gray-600">Ctrl + Shift + O</p>
+                      <p className="text-xs text-gray-600">{t("sidebar.newChat")}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -201,13 +204,15 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                         onClick={() => setIsSearchOpen((prev) => !prev)}
                       >
                         <Search />
-                        <span
-                          className={`${
-                            theme === "dark" ? "text-white" : "text-[#888888]"
-                          }`}
-                        >
-                          {t("sidebar.search")}
-                        </span>
+                        {state === "expanded" && (
+                          <span
+                            className={`${
+                              theme === "dark" ? "text-white" : "text-[#888888]"
+                            }`}
+                          >
+                            {t("sidebar.search")}
+                          </span>
+                        )}
                       </SidebarMenuButton>
                     </TooltipTrigger>
                     <TooltipContent
@@ -216,7 +221,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                       className="bg-gray-200 text-white"
                       hidden={state === "expanded"}
                     >
-                      <p className="text-xs text-gray-600">Ctrl + K</p>
+                      <p className="text-xs text-gray-600">{t("sidebar.search")}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -237,13 +242,15 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                   isActive={location.pathname === "/community"}
                 >
                   <Image />
-                  <span
-                    className={`${
-                      theme === "dark" ? "text-white" : "text-[#888888]"
-                    }`}
-                  >
-                    {t("sidebar.images")}
-                  </span>
+                  {state === "expanded" && (
+                    <span
+                      className={`${
+                        theme === "dark" ? "text-white" : "text-[#888888]"
+                      }`}
+                    >
+                      {t("sidebar.images")}
+                    </span>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
@@ -257,13 +264,15 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                   isActive={location.pathname === "/projects"}
                 >
                   <FaRegFolderOpen />
-                  <span
-                    className={`${
-                      theme === "dark" ? "text-white" : "text-[#888888]"
-                    }`}
-                  >
-                    {t("sidebar.projects")}
-                  </span>
+                  {state === "expanded" && (
+                    <span
+                      className={`${
+                        theme === "dark" ? "text-white" : "text-[#888888]"
+                      }`}
+                    >
+                      {t("sidebar.projects")}
+                    </span>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

@@ -18,34 +18,34 @@ const Community = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="p-6 pt-12 xl:px-12 2xl:px-20 w-full mx-auto h-full overflow-y-scroll">
-      <h2 className="text-xl font-semibold mb-6 text-gray-800 dark:text-purple-100">
+    <div className="w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <h2 className="mb-6 text-xl font-semibold text-gray-800 dark:text-purple-100">
         Community Images
       </h2>
 
       {images.length > 0 ? (
-        <div className="flex flex-wrap max-sm:justify-center gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {images.map((item, index) => (
-            
-             <a href={item.imageUrl}
+            <a
+              href={item.imageUrl}
               target="_blank"
               rel="noopener noreferrer"
               key={index}
-              className="relative group block rounded-lg overflow-hidden border border-gray-200 dark:border-purple-700 shadow-sm hover:shadow-md transition-shadow duration-300"
+              className="group relative block overflow-hidden rounded-lg border border-gray-200 shadow-sm transition-shadow duration-300 hover:shadow-md dark:border-purple-700"
             >
               <img
                 src={item.imageUrl}
-                className="w-full h-40 md:h-50 2xl:h-62 object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                className="h-48 w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105 sm:h-56 lg:h-64"
                 alt={`Created by ${item.userName}`}
               />
-              <p className="absolute bottom-0 right-0 text-xs bg-black/50 backdrop-blur text-white px-4 py-1 rounded-tl-xl opacity-0 group-hover:opacity-100 transition duration-300">
+              <p className="absolute bottom-0 right-0 rounded-tl-xl bg-black/50 px-4 py-1 text-xs text-white opacity-0 backdrop-blur transition duration-300 group-hover:opacity-100">
                 Created by {item.userName}
               </p>
             </a>
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-600 dark:text-purple-200 mt-10">
+        <p className="mt-10 text-center text-gray-600 dark:text-purple-200">
           No images
         </p>
       )}

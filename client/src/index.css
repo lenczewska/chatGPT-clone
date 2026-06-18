@@ -4,6 +4,32 @@
 
 * {
   font-family: "Outfit", sans-serif;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
 }
 
 ::-webkit-scrollbar {
@@ -440,7 +466,6 @@
 }
 
 @media (max-width: 768px) {
-  /* Отключаем Sheet поведение */
   [data-sidebar="sidebar"] {
     transform: none !important;
     position: fixed !important;
@@ -451,33 +476,37 @@
     transition: width 0.2s ease !important;
   }
 
-  /* Collapsed состояние — только иконки */
   [data-collapsible="icon"][data-state="collapsed"] {
     width: var(--sidebar-width-icon) !important;
     min-width: var(--sidebar-width-icon) !important;
   }
 
-  /* Expanded состояние — полный сайдбар */
   [data-collapsible="icon"][data-state="expanded"] {
     width: var(--sidebar-width) !important;
     min-width: var(--sidebar-width) !important;
   }
 
-  /* Убираем overlay/backdrop от Sheet */
   [data-sidebar="overlay"] {
     display: none !important;
   }
 
-  /* Сдвигаем основной контент */
   [data-sidebar="inset"] {
     margin-left: var(--sidebar-width-icon) !important;
     transition: margin-left 0.2s ease !important;
     width: calc(100% - var(--sidebar-width-icon)) !important;
+    min-width: 0 !important;
   }
 
   [data-state="expanded"] ~ [data-sidebar="inset"],
   .peer[data-state="expanded"] ~ [data-sidebar="inset"] {
     margin-left: var(--sidebar-width) !important;
     width: calc(100% - var(--sidebar-width)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  [data-sidebar="inset"] {
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 }
