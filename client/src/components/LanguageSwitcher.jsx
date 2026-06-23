@@ -37,12 +37,12 @@ const LanguageSwitcher = ({ theme }) => {
           backgroundColor: theme === "dark" ? "#4A3A6B" : "#000000",
           color: "white",
         }}
-        className="flex items-center gap-1.5 text-[12px] font-medium px-3 cursor-pointer py-1 rounded-full transition-all duration-200 hover:opacity-80"
+        className="flex items-center gap-1.5  px-2 cursor-pointer rounded-full transition-all duration-200 hover:opacity-80"
       >
         <span>{selected?.icon}</span>
         <span>{selected?.label}</span>
         <span
-          className={`text-xs transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`text-[11px] transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         >
           ▾
         </span>
