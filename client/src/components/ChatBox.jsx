@@ -12,11 +12,14 @@ const ChatBox = () => {
   const { selectedChat, theme, setChats, setSelectedChat, chats } = useAppContext();
   const { t, i18n } = useTranslation();
   const containerRef = useRef(null);
+  const modelDropdownRef = useRef(null);
   const abortControllerRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [mode, setMode] = useState("text");
+  const [selectedModel, setSelectedModel] = useState("");
+  const [isModelOpen, setIsModelOpen] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const [file, setFile] = useState(null);
   const [fileDescription, setFileDescription] = useState("");
@@ -36,6 +39,17 @@ const ChatBox = () => {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modelDropdownRef.current && !modelDropdownRef.current.contains(event.target)) {
+        setIsModelOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleStop = () => {
     if (abortControllerRef.current) {
@@ -206,7 +220,7 @@ const ChatBox = () => {
             <label
               htmlFor="file-upload"
               className={`cursor-pointer px-3 py-1.5 rounded-4xl border hover:opacity-80 text-[13px] text-white
-    ${theme === "dark" ? "bg-[#6D5FB9]" : "bg-black"}`}
+    ${theme === "dark" ? "bg-[#4A3A6B]" : "bg-black"}`}
             >
               {t("chatbox.chooseFile")}
             </label>
@@ -244,13 +258,56 @@ const ChatBox = () => {
           />
         )}
 
-        <select name="models" id="">
-          <optgroup label={t("chatbox.model")}>
-            <option value="">{t("chatbox.model")}</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </optgroup>
-        </select>
+        <div ref={modelDropdownRef} className="relative">
+          <button
+            type="button"
+            onClick={() => setIsModelOpen((prev) => !prev)}
+            className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-all ${
+              theme === "dark"
+                ? "border-[#80609F]/50 bg-[#4A3A6B] text-white hover:bg-[#5A4A7B]"
+                : "border-black bg-black text-white hover:bg-[#222222]"
+            }`}
+          >
+            <span>{selectedModel || t("chatbox.model")}</span>
+            <span className={`text-xs transition-transform ${isModelOpen ? "rotate-180" : ""}`}>
+              ▾
+            </span>
+          </button>
+
+          {isModelOpen && (
+            <div
+              className={`absolute right-0 bottom-full mb-1 z-50 min-w-22 overflow-hidden rounded-xl border shadow-lg ${
+                theme === "dark"
+                  ? "border-[#80609F]/40 bg-[#1e1028] text-white"
+                  : "border-gray-200 bg-white text-black"
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedModel("");
+                  setIsModelOpen(false);
+                }}
+                className="flex w-full items-center px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#57317C]/20"
+              >
+                {t("chatbox.model")}
+              </button>
+              {[1, 2, 3].map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => {
+                    setSelectedModel(String(option));
+                    setIsModelOpen(false);
+                  }}
+                  className="flex w-full items-center px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#57317C]/20"
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         <button
           type={loading ? "button" : "submit"}
