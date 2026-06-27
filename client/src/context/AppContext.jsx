@@ -5,11 +5,25 @@ import { dummyUserData, dummyChats } from "../assets/assets";
 
 const AppContext = createContext();
 
+const readStoredValue = (key, fallback) => {
+  if (typeof window === "undefined") return fallback;
+
+  try {
+    const storedValue = localStorage.getItem(key);
+    return storedValue ? JSON.parse(storedValue) : fallback;
+  } catch (error) {
+    console.error(`Failed to parse ${key}:`, error);
+    return fallback;
+  }
+};
+
 export const AppContextProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [chats, setChats] = useState([]);
-  const [selectedChat, setSelectedChat] = useState([]);
+  const [chats, setChats] = useState(() => readStoredValue("fluxChats", []));
+  const [selectedChat, setSelectedChat] = useState(() =>
+    readStoredValue("fluxSelectedChat", null),
+  );
   const [projects, setProjects] = useState([]);
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
@@ -49,14 +63,52 @@ export const AppContextProvider = ({ children }) => {
     if (user) {
       fetchUserChats();
     } else {
-      setChats([]);
-      setSelectedChat(null);
+      const storedChats = readStoredValue("fluxChats", []);
+      const storedSelectedChat = readStoredValue("fluxSelectedChat", null);
+      setChats(storedChats);
+      setSelectedChat(storedSelectedChat);
     }
   }, [user]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("fluxChats", JSON.stringify(chats));
+    }
+  }, [chats]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (selectedChat) {
+        localStorage.setItem("fluxSelectedChat", JSON.stringify(selectedChat));
+      } else {
+        localStorage.removeItem("fluxSelectedChat");
+      }
+    }
+  }, [selectedChat]);
+
+  useEffect(() => {
     fetchUser();
   }, []);
+
+  const createNewChat = () => {
+    const newChat = {
+      _id: `chat-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      name: "New chat",
+      title: "New chat",
+      messages: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    setChats((prev) => {
+      if (prev.some((chat) => chat._id === newChat._id)) {
+        return prev;
+      }
+      return [newChat, ...prev];
+    });
+    setSelectedChat(newChat);
+    return newChat;
+  };
 
   const value = {
     user,
@@ -70,6 +122,7 @@ export const AppContextProvider = ({ children }) => {
     setProjects,
     theme,
     setTheme,
+    createNewChat,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

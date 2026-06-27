@@ -16,32 +16,21 @@ const ChatSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    title: {
+      type: String,
+      default: "Новый чат", // 👈 название чата
+    },
     messages: [
       {
-        isImages: {
-          type: Boolean,
-          required: true,
-        },
-        isPublished: {
-          type: Boolean,
-          default: false,
-        },
-        role: {
-          type: String,
-          required: true,
-        },
-        content: {
-          type: String,
-          required: true,
-        },
-        timestamp: {
-          type: Number,
-          required: true,
-        },
+        isImages: { type: Boolean, required: true },
+        isPublished: { type: Boolean, default: false },
+        role: { type: String, required: true },
+        content: { type: String, required: true },
+        timestamp: { type: Number, required: true },
       },
     ],
   },
-  { timestamp: true },
+  { timestamps: true }, // 👈 исправлено на правильное свойство
 );
 
 const Chat = mongoose.model("Chat", ChatSchema);

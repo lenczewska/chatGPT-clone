@@ -2,41 +2,38 @@ import Chat from "../models/Chat.js";
 
 export const createChat = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const { userId, userName, name, firstMessage } = req.body;
 
-    const chatData = {
+    const chat = new Chat({
       userId,
+      userName,
+      name,
+      title: firstMessage ? firstMessage.slice(0, 32) : "Новый чат", // 👈 генерация названия
       messages: [],
-      name: "New Chat",
-      userName: req.user.name,
-    };
+    });
 
-    await Chat.create(chatData);
-    res.json({ success: true, message: "Chat created" });
+    await chat.save();
+    res.status(201).json(chat);
   } catch (error) {
-    res.json({ success: false, error: error.message });
+    res.status(500).json({ error: "Ошибка при создании чата" });
   }
 };
 
 export const getChats = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const chats = await Chat.find({ userId }).sort({ updatedAt: -1 });
-
-    res.json({ success: true, chats });
+    const chats = await Chat.find({ userId: req.user.id }).sort({ updatedAt: -1 });
+    res.json(chats);
   } catch (error) {
-    res.json({ success: false, messages: error.message });
+    res.status(500).json({ error: "Ошибка при получении чатов" });
   }
 };
 
 export const deleteChat = async (req, res) => {
   try {
-    const userId = req.user._id;
     const { chatId } = req.body;
-
-    await Chat.deleteOne({ _id: chatId, userId });
-    res.json({ success: true, message: "Chat Deleted" });
+    await Chat.findByIdAndDelete(chatId);
+    res.json({ message: "Чат удалён" });
   } catch (error) {
-    res.json({ success: false, messages: error.message });
+    res.status(500).json({ error: "Ошибка при удалении чата" });
   }
 };

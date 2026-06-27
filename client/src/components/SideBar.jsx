@@ -52,6 +52,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     setProjects,
     deleteChat,
     setSelectedProject,
+    createNewChat,
   } = useAppContext();
   const [activeMenu, setActiveMenu] = useState(null);
   const [search] = useState("");
@@ -102,6 +103,13 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     }
   };
 
+  const handleDeleteProject = (projectId) => {
+    setProjects((prev) =>
+      prev.filter((project) => (project._id || project.id) !== projectId),
+    );
+    setActiveMenu(null);
+  };
+
   const formatTime = (date) => {
     if (!date) return "";
     const momentDate = moment(date);
@@ -142,7 +150,11 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
               className="ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-sidebar-accent"
               aria-label="Open sidebar"
             >
-              <img src={favFluxLogo} alt="Logo" className="h-6 w-6 object-contain cursor-pointer" />
+              <img
+                src={favFluxLogo}
+                alt="Logo"
+                className="h-6 w-6 object-contain cursor-pointer"
+              />
             </button>
           ) : (
             <button
@@ -167,6 +179,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                       <SidebarMenuButton
                         className="cursor-pointer"
                         onClick={() => {
+                          createNewChat();
                           navigate("/");
                           setIsMenuOpen(false);
                         }}
@@ -189,7 +202,9 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                       className="bg-gray-200 text-white"
                       hidden={state === "expanded"}
                     >
-                      <p className="text-xs text-gray-600">{t("sidebar.newChat")}</p>
+                      <p className="text-xs text-gray-600">
+                        {t("sidebar.newChat")}
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -221,16 +236,15 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                       className="bg-gray-200 text-white"
                       hidden={state === "expanded"}
                     >
-                      <p className="text-xs text-gray-600">{t("sidebar.search")}</p>
+                      <p className="text-xs text-gray-600">
+                        {t("sidebar.search")}
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </SidebarMenuItem>
 
-              <SearchModal
-                open={isSearchOpen}
-                onOpenChange={setIsSearchOpen}
-              />
+              <SearchModal open={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -358,8 +372,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                           className="w-full flex items-center gap-2 px-4 py-2 text-left text-sm rounded-b-lg cursor-pointer transition-colors duration-150"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setActiveMenu(null);
-                            // onDelete?.(projectId);
+                            handleDeleteProject(projectId);
                           }}
                         >
                           <MdOutlineDeleteOutline />
@@ -383,44 +396,26 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
           <span className="text-[#aaa]">{t("sidebar.yourChats")}</span>
         </div>
 
-         <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
-          {chats
-            .filter((chat) => {
-              const firstMessage = chat.messages?.[0]?.content;
-              return firstMessage
-                ? firstMessage.toLowerCase().includes(search.toLowerCase())
-                : chat.name.toLowerCase().includes(search.toLowerCase());
-            })
-            .map((chat) => {
-              const firstMessage = chat.messages?.[0]?.content;
-              return (
-                <div
-                  key={chat._id}
-                  onClick={() => handleChatClick(chat)}
-                  className="p-2 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between items-center group hover:bg-gray-100 dark:hover:bg-[#57317C]/20 transition-colors"
-                  onMouseEnter={() => setHoveredChatId(chat._id)}
-                  onMouseLeave={() => setHoveredChatId(null)}
-                >
-                  <div className="flex flex-col overflow-hidden flex-1">
-                    <p className="truncate font-medium">
-                      {firstMessage ? firstMessage.slice(0, 32) : chat.name}
-                    </p>
-                    <span className="text-xs text-gray-500 dark:text-[#B1A6C0]">
-                      {formatTime(chat.updatedAt || chat.createdAt)}
-                    </span>
-                  </div>
-                  {hoveredChatId === chat._id && (
-                    <img
-                      src={assets.bin_icon}
-                      onClick={(e) => handleDeleteChat(e, chat._id)}
-                      className="rounded-full bg-gray-400 w-5 h-5 p-1 cursor-pointer dark:invert-0 hover:bg-gray-700 transition-colors"
-                      alt="Delete chat"
-                    />
-                  )}
+        <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
+          {chats.map((chat) => {
+            const chatTitle = chat.title || chat.name || "New chat";
+            return (
+              <div
+                key={chat._id}
+                onClick={() => handleChatClick(chat)}
+                className="p-2 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between items-center group hover:bg-gray-100 dark:hover:bg-[#57317C]/20 transition-colors"
+              >
+                <div className="flex flex-col overflow-hidden flex-1">
+                  <p className="truncate font-medium">{chatTitle}</p>
+                  <span className="text-xs text-gray-500 dark:text-[#B1A6C0]">
+                    {formatTime(chat.updatedAt || chat.createdAt)}
+                  </span>
                 </div>
-              );
-            })}
-        </div> 
+              </div>
+            );
+          })}
+        </div>
+
 
         <div
           className="group flex items-center justify-between mr-2 ml-2 gap-3 p-1 mt-3 border dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20"

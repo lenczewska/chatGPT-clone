@@ -9,7 +9,7 @@ import "moment/locale/ru";
 import "moment/locale/az";
 
 const ChatBox = () => {
-  const { selectedChat, theme } = useAppContext();
+  const { selectedChat, theme, setChats, setSelectedChat, chats } = useAppContext();
   const { t, i18n } = useTranslation();
   const containerRef = useRef(null);
   const abortControllerRef = useRef(null);
@@ -45,6 +45,33 @@ const ChatBox = () => {
     setLoading(false);
   };
 
+  const syncActiveChat = (chatId, nextMessages, title) => {
+    const baseChat = selectedChat || {
+      _id: chatId,
+      name: title,
+      title,
+      messages: [],
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedChat = {
+      ...baseChat,
+      _id: chatId,
+      name: title,
+      title,
+      messages: nextMessages,
+      updatedAt: new Date().toISOString(),
+    };
+
+    setSelectedChat(updatedChat);
+    setChats((prev) => {
+      const exists = prev.some((chat) => chat._id === chatId);
+      return exists
+        ? prev.map((chat) => (chat._id === chatId ? updatedChat : chat))
+        : [updatedChat, ...prev];
+    });
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
@@ -57,6 +84,13 @@ const ChatBox = () => {
     try {
       setLoading(true);
 
+      const chatId = selectedChat?._id || `chat-${Date.now()}`;
+      const chatTitle = prompt.trim().slice(0, 24) || "New chat";
+
+      if (!selectedChat) {
+        syncActiveChat(chatId, [], chatTitle);
+      }
+
       const newMessage = {
         role: "user",
         content:
@@ -65,7 +99,14 @@ const ChatBox = () => {
             : `${t("chatbox.attachedFile")}: ${file.name}\n${fileDescription}`,
         timestamp: new Date().toISOString(),
       };
-      setMessages((prev) => [...prev, newMessage]);
+      const userMessageToStore = {
+        ...newMessage,
+        timestamp: new Date().toISOString(),
+      };
+      const currentMessages = [...(selectedChat?.messages || []), userMessageToStore];
+
+      setMessages(currentMessages);
+      syncActiveChat(chatId, currentMessages, chatTitle);
       setPrompt("");
 
       const res = await fetch("http://localhost:3000/api/openrouter", {
@@ -85,7 +126,9 @@ const ChatBox = () => {
         content: data.answer,
         timestamp: new Date().toISOString(),
       };
-      setMessages((prev) => [...prev, botMessage]);
+      const updatedMessages = [...currentMessages, botMessage];
+      setMessages(updatedMessages);
+      syncActiveChat(chatId, updatedMessages, chatTitle);
 
       setFile(null);
       setFileDescription("");
@@ -178,15 +221,26 @@ const ChatBox = () => {
             />
           </div>
         ) : (
-          <input
-            type="text"
+          <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder={t("chatbox.placeholder")}
-            className="search-inp flex-1 w-full text-xs sm:text-sm outline-none bg-transparent 
-               placeholder:text-gray-600 px-1 sm:px-2"
+            className="search-inp flex-1 w-full text-xs sm:text-sm outline-none bg-transparent placeholder:text-gray-600 px-1 sm:px-2 resize-none overflow-hidden"
             disabled={loading}
             required
+            rows={1}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                if (!loading && prompt.trim()) {
+                  onSubmit(e);
+                }
+              }
+            }}
+            onInput={(e) => {
+              e.target.style.height = "auto";
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
           />
         )}
 
