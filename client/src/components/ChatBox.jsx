@@ -1,9 +1,6 @@
 import { useAppContext } from "@/context/AppContext";
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import Message from "./Message";
-import stop_icon from "../../public/stop_icon.jpg";
-import darkForWhite from "../assets/darkForWhite.png";
-import whiteForDark from "../assets/whiteForDark.png";
 import Select from "./ui/select";
 import SendBtn from "./ui/sendBtn";
 import { useTranslation } from "react-i18next";
@@ -15,6 +12,7 @@ const ChatBox = () => {
   const { selectedChat, theme } = useAppContext();
   const { t, i18n } = useTranslation();
   const containerRef = useRef(null);
+  const abortControllerRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
@@ -39,10 +37,22 @@ const ChatBox = () => {
     }
   }, [messages]);
 
+  const handleStop = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setLoading(false);
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (mode === "text" && !prompt.trim()) return;
     if (mode === "photo" && !file) return;
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     try {
       setLoading(true);
@@ -56,17 +66,20 @@ const ChatBox = () => {
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, newMessage]);
+      setPrompt("");
 
-      // запрос к серверу
       const res = await fetch("http://localhost:3000/api/openrouter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: newMessage.content }),
       });
 
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`);
+      }
+
       const data = await res.json();
 
-      // сообщение ассистента
       const botMessage = {
         role: "assistant",
         content: data.answer,
@@ -74,19 +87,18 @@ const ChatBox = () => {
       };
       setMessages((prev) => [...prev, botMessage]);
 
-      setPrompt("");
       setFile(null);
       setFileDescription("");
     } catch (error) {
-      console.error("Error sending message:", error);
+      if (error.name !== "AbortError") {
+        console.error("Error sending message:", error);
+      }
     } finally {
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
       setLoading(false);
     }
-  };
-
-  const getButtonIcon = () => {
-    if (loading) return stop_icon;
-    return theme === "dark" ? whiteForDark : darkForWhite;
   };
 
   const placeholder = useMemo(() => {
@@ -179,25 +191,25 @@ const ChatBox = () => {
         )}
 
         <select name="models" id="">
-          <optgroup>
-            Model
-            <option value="">Model</option>
-            <option value="">2</option>
-            <option value="">3</option>
+          <optgroup label={t("chatbox.model")}>
+            <option value="">{t("chatbox.model")}</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
           </optgroup>
         </select>
 
         <button
-          type="submit"
-          disabled={
-            loading ||
-            (mode === "text" && !prompt.trim()) ||
-            (mode === "photo" && !file)
-          }
+          type={loading ? "button" : "submit"}
+          disabled={loading ? false : (mode === "text" && !prompt.trim()) || (mode === "photo" && !file)}
+          onClick={() => {
+            if (loading) {
+              handleStop();
+            }
+          }}
           aria-label={loading ? "Остановить генерацию" : "Отправить сообщение"}
           className="disabled:opacity-50 disabled:cursor-not-allowed w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center"
         >
-          <SendBtn theme={theme} />
+          <SendBtn theme={theme} loading={loading} />
         </button>
       </form>
     </div>

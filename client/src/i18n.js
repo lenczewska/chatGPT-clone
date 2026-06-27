@@ -20,6 +20,7 @@ i18n.use(initReactI18next).init({
         "sidebar.yesterday": "Yesterday",
         "select.text": "Text",
         "select.image": "Image",
+        "chatbox.model": "Model",
         "chatbox.chooseFile": "Choose file",
         "chatbox.placeholder": "Write a message...",
         "chatbox.phrases": [
@@ -52,6 +53,7 @@ i18n.use(initReactI18next).init({
         "sidebar.yesterday": "Вчера",
         "select.text": "Текст",
         "select.image": "Фото",
+        "chatbox.model": "Модель",
         "chatbox.chooseFile": "Выберите файл",
         "chatbox.placeholder": "Задайте вопрос...",
         "chatbox.phrases": [
@@ -84,6 +86,7 @@ i18n.use(initReactI18next).init({
         "sidebar.yesterday": "Dünən",
         "select.text": "Mətn",
         "select.image": "Şəkil",
+        "chatbox.model": "Model",
         "chatbox.chooseFile": "Faylı seçin",
         "chatbox.placeholder": "Sualınızı yazın...",
         "chatbox.phrases": [

@@ -112,10 +112,10 @@ const NewProjectChat = () => {
           )}
 
           <select name="models" id="" className="hidden sm:block">
-            <optgroup>
-              <option value="">1</option>
-              <option value="">2</option>
-              <option value="">3</option>
+            <optgroup label={t("chatbox.model")}>
+              <option value="">{t("chatbox.model")}</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
             </optgroup>
           </select>
 
