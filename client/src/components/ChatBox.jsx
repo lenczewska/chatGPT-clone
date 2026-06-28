@@ -59,8 +59,9 @@ const ChatBox = () => {
     setLoading(false);
   };
 
-  const syncActiveChat = (chatId, nextMessages, title) => {
-    const baseChat = selectedChat || {
+  const syncActiveChat = (chatId, nextMessages, title, shouldUpdateTitle = true) => {
+    const existingChat = selectedChat || chats.find((chat) => chat._id === chatId) || null;
+    const baseChat = existingChat || {
       _id: chatId,
       name: title,
       title,
@@ -68,11 +69,17 @@ const ChatBox = () => {
       createdAt: new Date().toISOString(),
     };
 
+    const previousTitle = baseChat.title || baseChat.name || "";
+    const hasMeaningfulTitle = Boolean(
+      previousTitle && previousTitle !== "New chat" && previousTitle !== "new chat",
+    );
+    const finalTitle = shouldUpdateTitle || !hasMeaningfulTitle ? title : previousTitle;
+
     const updatedChat = {
       ...baseChat,
       _id: chatId,
-      name: title,
-      title,
+      name: finalTitle,
+      title: finalTitle,
       messages: nextMessages,
       updatedAt: new Date().toISOString(),
     };
@@ -100,9 +107,14 @@ const ChatBox = () => {
 
       const chatId = selectedChat?._id || `chat-${Date.now()}`;
       const chatTitle = prompt.trim().slice(0, 24) || "New chat";
+      const existingChat = selectedChat || chats.find((chat) => chat._id === chatId) || null;
+      const existingMessages = existingChat?.messages || [];
+      const shouldSetInitialTitle =
+        existingMessages.length === 0 &&
+        (!existingChat?.title || existingChat.title === "New chat" || existingChat.title === "new chat");
 
-      if (!selectedChat) {
-        syncActiveChat(chatId, [], chatTitle);
+      if (shouldSetInitialTitle) {
+        syncActiveChat(chatId, [], chatTitle, true);
       }
 
       const newMessage = {
@@ -117,10 +129,10 @@ const ChatBox = () => {
         ...newMessage,
         timestamp: new Date().toISOString(),
       };
-      const currentMessages = [...(selectedChat?.messages || []), userMessageToStore];
+      const currentMessages = [...existingMessages, userMessageToStore];
 
       setMessages(currentMessages);
-      syncActiveChat(chatId, currentMessages, chatTitle);
+      syncActiveChat(chatId, currentMessages, chatTitle, false);
       setPrompt("");
 
       const res = await fetch("http://localhost:3000/api/openrouter", {
@@ -142,7 +154,7 @@ const ChatBox = () => {
       };
       const updatedMessages = [...currentMessages, botMessage];
       setMessages(updatedMessages);
-      syncActiveChat(chatId, updatedMessages, chatTitle);
+      syncActiveChat(chatId, updatedMessages, chatTitle, false);
 
       setFile(null);
       setFileDescription("");
