@@ -101,6 +101,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     if (typeof deleteChat === "function") {
       deleteChat(chatId);
     }
+    setActiveMenu(null);
   };
 
   const handleDeleteProject = (projectId) => {
@@ -399,11 +400,13 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
           {chats.map((chat) => {
             const chatTitle = chat.title || chat.name || "New chat";
+            const chatId = chat._id; // ✅ используем chatId вместо projectId
+
             return (
               <div
-                key={chat._id}
+                key={chatId}
                 onClick={() => handleChatClick(chat)}
-                className="p-2 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between items-center group hover:bg-gray-100 dark:hover:bg-[#57317C]/20 transition-colors"
+                className="relative p-2 dark:bg-[#57317C]/10 border border-gray-300 dark:border-[#80609F]/15 rounded-md cursor-pointer flex justify-between items-center group hover:bg-gray-100 dark:hover:bg-[#57317C]/20 transition-colors"
               >
                 <div className="flex flex-col overflow-hidden flex-1">
                   <p className="truncate font-medium">{chatTitle}</p>
@@ -411,11 +414,57 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                     {formatTime(chat.updatedAt || chat.createdAt)}
                   </span>
                 </div>
+
+                <div className="dropMenu">
+                  <button
+                    type="button"
+                    className="ml-2 p-1 transition-colors shrink-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveMenu(activeMenu === chatId ? null : chatId); // ✅ chatId
+                    }}
+                  >
+                    <HiOutlineDotsHorizontal
+                      className={`w-8 h-8 text-xl pr-0.5 pl-0.5 rounded-sm cursor-pointer ${
+                        theme === "dark"
+                          ? "hover:bg-gray-900"
+                          : "hover:bg-gray-200"
+                      }`}
+                    />
+                  </button>
+
+                  {activeMenu === chatId && ( // ✅ chatId
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setActiveMenu(null)}
+                      />
+                      <div
+                        className={`absolute right-0 top-8 mt-1 w-32 rounded-lg border shadow-lg z-20 ${
+                          theme === "dark"
+                            ? "border-gray-800 bg-black"
+                            : "border-gray-200 bg-white"
+                        }`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          type="button"
+                          className="w-full flex items-center gap-2 px-4 py-2 text-left text-sm rounded-b-lg cursor-pointer transition-colors duration-150"
+                          onClick={(e) => {
+                            handleDeleteChat(e, chatId); // ✅ chatId
+                          }}
+                        >
+                          <MdOutlineDeleteOutline />
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             );
           })}
         </div>
-
 
         <div
           className="group flex items-center justify-between mr-2 ml-2 gap-3 p-1 mt-3 border dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-[#57317C]/20"
