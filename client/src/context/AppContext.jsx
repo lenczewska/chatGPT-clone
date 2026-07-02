@@ -26,6 +26,10 @@ export const AppContextProvider = ({ children }) => {
   );
   const [projects, setProjects] = useState([]);
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const deleteChat = (chatId) => {
+    setChats((prev) => prev.filter((chat) => chat._id !== chatId));
+    setSelectedChat((prev) => (prev?._id === chatId ? null : prev));
+  };
 
   useEffect(() => {
     const storedProjects = localStorage.getItem("fluxProjects");
@@ -123,6 +127,7 @@ export const AppContextProvider = ({ children }) => {
     theme,
     setTheme,
     createNewChat,
+    deleteChat,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

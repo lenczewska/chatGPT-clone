@@ -433,7 +433,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                     />
                   </button>
 
-                  {activeMenu === chatId && ( // ✅ chatId
+                  {activeMenu === chatId && (
                     <>
                       <div
                         className="fixed inset-0 z-10"
@@ -451,7 +451,8 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                           type="button"
                           className="w-full flex items-center gap-2 px-4 py-2 text-left text-sm rounded-b-lg cursor-pointer transition-colors duration-150"
                           onClick={(e) => {
-                            handleDeleteChat(e, chatId); // ✅ chatId
+                            e.stopPropagation();
+                            handleDeleteChat(e, chatId);
                           }}
                         >
                           <MdOutlineDeleteOutline />
