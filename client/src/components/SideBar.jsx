@@ -173,7 +173,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
           ) : (
             <button
               onClick={toggleSidebar}
-              className="ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-sidebar-accent"
+              className="ml-auto flex h-9  cursor-pointer  w-9 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-sidebar-accent"
               aria-label="Toggle sidebar"
             >
               <PanelLeft className="h-5 w-5 text-sidebar-foreground" />
