@@ -40,6 +40,7 @@ import "moment/locale/ru";
 import "moment/locale/az";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 
+
 const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
   const { t, i18n } = useTranslation();
   const {
@@ -136,7 +137,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
       <SidebarHeader>
         <div className="flex items-center justify-between px-3 py-3 sm:px-2 sm:py-2">
           <Link
-            to="/"
+            to="/chatBox"
             className="flex min-w-0 items-center group-data-[collapsible=icon]:hidden"
           >
             <img
@@ -181,7 +182,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                         className="cursor-pointer"
                         onClick={() => {
                           createNewChat();
-                          navigate("/");
+                          navigate("/chatBox");
                           setIsMenuOpen(false);
                         }}
                       >

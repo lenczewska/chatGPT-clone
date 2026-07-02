@@ -29,7 +29,7 @@ function App() {
           <main className="flex-1 overflow-x-hidden">
             <div className="w-full max-w-7xl mx-auto p-2 sm:p-4 md:p-6 xl:p-8">
               <Routes>
-                <Route path="/" element={<ChatBox />} />
+                <Route path="/chatBox" element={<ChatBox />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/community" element={<Community />} />
                 <Route path="/projects" element={<Projects />} />
