@@ -7,7 +7,7 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaPen } from "react-icons/fa";
 
 const ProjectFolders = ({ projects = [], onDelete, onToggleStar, onEdit }) => {
-  const { theme } = useAppContext();
+  const { theme, setSelectedProject } = useAppContext();
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);
   const menuRef = useRef(null);
@@ -37,7 +37,10 @@ const ProjectFolders = ({ projects = [], onDelete, onToggleStar, onEdit }) => {
           key={project.id}
           className="group relative border border-[#4A3A6B] w-67.5 h-30 rounded-lg shadow-lg transition-all p-4 flex flex-col justify-between cursor-pointer"
           style={{ boxShadow: "0 2px 10px 0 rgba(74, 58, 107, 0.45)" }}
-          onClick={() => navigate("/newProjectChat")}
+          onClick={() => {
+            setSelectedProject(project); 
+            navigate("/newProjectChat");
+          }}
         >
           <div>
             <div className="flex items-center justify-between gap-2">

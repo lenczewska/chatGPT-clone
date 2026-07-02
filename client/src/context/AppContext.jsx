@@ -1,7 +1,7 @@
 import { createContext, use, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { dummyUserData, dummyChats } from "../assets/assets";
+import { dummyChats } from "../assets/assets";
 
 const AppContext = createContext();
 
@@ -30,6 +30,22 @@ export const AppContextProvider = ({ children }) => {
     setChats((prev) => prev.filter((chat) => chat._id !== chatId));
     setSelectedChat((prev) => (prev?._id === chatId ? null : prev));
   };
+  const [selectedProject, setSelectedProject] = useState(() =>
+    readStoredValue("fluxSelectedProject", null),
+  );
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (selectedProject) {
+        localStorage.setItem(
+          "fluxSelectedProject",
+          JSON.stringify(selectedProject),
+        );
+      } else {
+        localStorage.removeItem("fluxSelectedProject");
+      }
+    }
+  }, [selectedProject]);
 
   useEffect(() => {
     const storedProjects = localStorage.getItem("fluxProjects");
@@ -94,11 +110,12 @@ export const AppContextProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  const createNewChat = () => {
+  const createNewChat = (projectId = null) => {
     const newChat = {
       _id: `chat-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       name: "New chat",
       title: "New chat",
+      projectId,
       messages: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -114,6 +131,38 @@ export const AppContextProvider = ({ children }) => {
     return newChat;
   };
 
+  const deriveTitleFromMessage = (content, maxLen = 40) => {
+    if (!content) return "New chat";
+    const trimmed = content.trim();
+    return trimmed.length > maxLen ? trimmed.slice(0, maxLen) + "…" : trimmed;
+  };
+
+  const addMessageToChat = (chatId, message) => {
+    setChats((prev) =>
+      prev.map((chat) => {
+        if (chat._id !== chatId) return chat;
+
+        const isFirstMessage = (chat.messages || []).length === 0;
+        const shouldUpdateTitle =
+          isFirstMessage &&
+          message.role === "user" &&
+          chat.title === "New chat";
+
+        const newTitle = shouldUpdateTitle
+          ? deriveTitleFromMessage(message.content)
+          : chat.title;
+
+        return {
+          ...chat,
+          title: newTitle,
+          name: newTitle,
+          messages: [...(chat.messages || []), message],
+          updatedAt: new Date().toISOString(),
+        };
+      }),
+    );
+  };
+
   const value = {
     user,
     setUser,
@@ -122,12 +171,15 @@ export const AppContextProvider = ({ children }) => {
     setChats,
     selectedChat,
     setSelectedChat,
+    selectedProject,
+    setSelectedProject,
     projects,
     setProjects,
     theme,
     setTheme,
     createNewChat,
     deleteChat,
+    addMessageToChat,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

@@ -9,15 +9,17 @@ import NewProjectModal from "../components/NewProjectModal";
 import { useAppContext } from "@/context/AppContext";
 import { CiSearch } from "react-icons/ci";
 
-const Projects = ({}) => {
+const Projects = () => {
   const { t } = useTranslation();
-  const { theme, projects, setProjects } = useAppContext();
+  const { theme, projects, setProjects, setSelectedProject } = useAppContext();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleAddProject = (project) => {
-    setProjects((prev) => [...prev, { ...project, starred: false }]);
+    const newProject = { ...project, starred: false };
+    setProjects((prev) => [...prev, newProject]);
+    setSelectedProject(newProject);
     navigate("/newProjectChat");
   };
 
@@ -27,7 +29,9 @@ const Projects = ({}) => {
 
   const toggleStar = (projectId) => {
     setProjects((prev) =>
-      prev.map((p) => (p.id === projectId ? { ...p, starred: !p.starred } : p)),
+      prev.map((p) =>
+        p.id === projectId ? { ...p, starred: !p.starred } : p,
+      ),
     );
   };
 
@@ -50,7 +54,9 @@ const Projects = ({}) => {
             color: theme === "dark" ? "white" : "black",
             paddingRight: "36px",
           }}
-          className={theme === "dark" ? "placeholder:text-white" : "placeholder:text-black"}
+          className={
+            theme === "dark" ? "placeholder:text-white" : "placeholder:text-black"
+          }
           placeholder={t("project.placeholder")}
         />
         <CiSearch

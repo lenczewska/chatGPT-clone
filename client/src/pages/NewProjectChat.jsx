@@ -8,19 +8,30 @@ import { useState } from "react";
 import { TfiArrowCircleLeft } from "react-icons/tfi";
 import { RxDotsHorizontal } from "react-icons/rx";
 
-
 const NewProjectChat = () => {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("text");
   const [showMenu, setShowMenu] = useState(false);
-  const [messages, setMessages] = useState([]);
   const [file, setFile] = useState(null);
   const [fileDescription, setFileDescription] = useState("");
-  const { theme } = useAppContext();
+
+  const {
+    chats,
+    theme,
+    selectedProject,
+    setSelectedChat,     // ✅ добавили — нужно для клика по чату в списке
+    createNewChat,
+    addMessageToChat,
+  } = useAppContext();
+
   const { t, i18n } = useTranslation();
   const createdDate = new Date().toLocaleDateString(i18n.language);
+
+  const projectId = selectedProject?._id || selectedProject?.id;
+  const projectChats = chats.filter((c) => c.projectId === projectId);
+
   const onSubmit = async (e) => {
     e.preventDefault();
     if (mode === "text" && !prompt.trim()) return;
@@ -28,6 +39,7 @@ const NewProjectChat = () => {
 
     try {
       setLoading(true);
+
       const newMessage = {
         role: "user",
         content:
@@ -36,16 +48,23 @@ const NewProjectChat = () => {
             : `${t("chatbox.attachedFile")}: ${file.name}\n${fileDescription}`,
         timestamp: new Date().toISOString(),
       };
-      setMessages((prev) => [...prev, newMessage]);
+
+      // ✅ всегда создаём НОВЫЙ чат при отправке с этой страницы
+      const chat = createNewChat(projectId);
+      addMessageToChat(chat._id, newMessage);
+
       setPrompt("");
       setFile(null);
       setFileDescription("");
+
+      navigate("/");
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className="w-full max-w-6xl mx-auto px-3 pb-8 sm:px-4 md:px-6">
       <div className="flex items-center">
@@ -59,8 +78,9 @@ const NewProjectChat = () => {
       </div>
 
       <div className="space-y-6">
-        <h3 className="pl-1 text-2xl font-semibold">Project name</h3>
-
+        <h3 className="pl-1 text-2xl font-semibold">
+          {selectedProject?.name || "Project name"}
+        </h3>
         <form
           onSubmit={onSubmit}
           className={`flex w-full max-w-3xl items-center gap-2 rounded-2xl border p-2 sm:p-3 sm:pl-4 ${
@@ -134,38 +154,27 @@ const NewProjectChat = () => {
             <SendBtn theme={theme} />
           </button>
         </form>
-
-        <div className="relative flex min-h-32 w-full max-w-3xl items-center gap-2 rounded-xl border p-5">
-          <span className="pr-14 text-sm text-gray-500 transition-opacity duration-200 group-hover:opacity-0 dark:text-gray-400">
-            {createdDate}
-          </span>
-
-          <button
-            type="button"
-            className="absolute right-4 flex items-center opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-            onClick={() => setShowMenu((prev) => !prev)}
-            aria-label="Toggle menu"
-          >
-            <RxDotsHorizontal className="h-6 w-10" />
-          </button>
-
-          {showMenu && (
-            <div className="absolute right-0 top-full z-20 mt-2 w-44 rounded-xl border bg-white shadow-lg dark:border-gray-700 dark:bg-[#f2f2f2]">
-              <button
-                type="button"
-                className="w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-700 hover:rounded-xl hover:bg-gray-50 dark:text-gray-200"
-                onClick={() => setShowMenu(false)}
+        <div className="space-y-2 w-full max-w-3xl">
+          {projectChats.length === 0 ? (
+            <p className="text-sm text-gray-500">Нет чатов в этом проекте</p>
+          ) : (
+            projectChats.map((chat) => (
+              <div
+                key={chat._id}
+                className="flex items-center justify-between rounded-xl border p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5"
+                onClick={() => {
+                  setSelectedChat(chat);
+                  navigate("/");
+                }}
               >
-                Option 1
-              </button>
-              <button
-                type="button"
-                className="w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-700 hover:rounded-xl hover:bg-gray-50 dark:text-gray-200"
-                onClick={() => setShowMenu(false)}
-              >
-                Option 2
-              </button>
-            </div>
+                <span className="truncate">{chat.title || chat.name}</span>
+                <span className="text-xs text-gray-500">
+                  {new Date(
+                    chat.updatedAt || chat.createdAt,
+                  ).toLocaleDateString(i18n.language)}
+                </span>
+              </div>
+            ))
           )}
         </div>
       </div>
