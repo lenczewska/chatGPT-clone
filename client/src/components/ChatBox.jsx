@@ -9,7 +9,14 @@ import "moment/locale/ru";
 import "moment/locale/az";
 
 const ChatBox = () => {
-  const { selectedChat, theme, setChats, setSelectedChat, chats } = useAppContext();
+  const {
+    selectedChat,
+    theme,
+    setChats,
+    setSelectedChat,
+    chats,
+    setChatPendingReply,
+  } = useAppContext();
   const { t, i18n } = useTranslation();
   const containerRef = useRef(null);
   const modelDropdownRef = useRef(null);
@@ -42,7 +49,10 @@ const ChatBox = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (modelDropdownRef.current && !modelDropdownRef.current.contains(event.target)) {
+      if (
+        modelDropdownRef.current &&
+        !modelDropdownRef.current.contains(event.target)
+      ) {
         setIsModelOpen(false);
       }
     };
@@ -59,8 +69,14 @@ const ChatBox = () => {
     setLoading(false);
   };
 
-  const syncActiveChat = (chatId, nextMessages, title, shouldUpdateTitle = true) => {
-    const existingChat = selectedChat || chats.find((chat) => chat._id === chatId) || null;
+  const syncActiveChat = (
+    chatId,
+    nextMessages,
+    title,
+    shouldUpdateTitle = true,
+  ) => {
+    const existingChat =
+      selectedChat || chats.find((chat) => chat._id === chatId) || null;
     const baseChat = existingChat || {
       _id: chatId,
       name: title,
@@ -71,9 +87,12 @@ const ChatBox = () => {
 
     const previousTitle = baseChat.title || baseChat.name || "";
     const hasMeaningfulTitle = Boolean(
-      previousTitle && previousTitle !== "New chat" && previousTitle !== "new chat",
+      previousTitle &&
+      previousTitle !== "New chat" &&
+      previousTitle !== "new chat",
     );
-    const finalTitle = shouldUpdateTitle || !hasMeaningfulTitle ? title : previousTitle;
+    const finalTitle =
+      shouldUpdateTitle || !hasMeaningfulTitle ? title : previousTitle;
 
     const updatedChat = {
       ...baseChat,
@@ -82,6 +101,7 @@ const ChatBox = () => {
       title: finalTitle,
       messages: nextMessages,
       updatedAt: new Date().toISOString(),
+      pendingBotReply: false, // ✅ всегда сбрасываем — раз идёт синхронизация, ждать больше нечего
     };
 
     setSelectedChat(updatedChat);
@@ -92,53 +112,25 @@ const ChatBox = () => {
         : [updatedChat, ...prev];
     });
   };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (loading) return;
-    if (mode === "text" && !prompt.trim()) return;
-    if (mode === "photo" && !file) return;
-
+  // Запрос к боту — переиспользуется и при ручной отправке, и при автозапуске
+  const sendToBot = async (chatId, currentMessages, chatTitle) => {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
     try {
       setLoading(true);
 
-      const chatId = selectedChat?._id || `chat-${Date.now()}`;
-      const chatTitle = prompt.trim().slice(0, 24) || "New chat";
-      const existingChat = selectedChat || chats.find((chat) => chat._id === chatId) || null;
-      const existingMessages = existingChat?.messages || [];
-      const shouldSetInitialTitle =
-        existingMessages.length === 0 &&
-        (!existingChat?.title || existingChat.title === "New chat" || existingChat.title === "new chat");
+      const lastUserMessage = [...currentMessages]
+        .reverse()
+        .find((m) => m.role === "user");
 
-      if (shouldSetInitialTitle) {
-        syncActiveChat(chatId, [], chatTitle, true);
-      }
-
-      const newMessage = {
-        role: "user",
-        content:
-          mode === "text"
-            ? prompt
-            : `${t("chatbox.attachedFile")}: ${file.name}\n${fileDescription}`,
-        timestamp: new Date().toISOString(),
-      };
-      const userMessageToStore = {
-        ...newMessage,
-        timestamp: new Date().toISOString(),
-      };
-      const currentMessages = [...existingMessages, userMessageToStore];
-
-      setMessages(currentMessages);
-      syncActiveChat(chatId, currentMessages, chatTitle, false);
-      setPrompt("");
+      if (!lastUserMessage) return;
 
       const res = await fetch("http://localhost:3000/api/openrouter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: newMessage.content }),
+        body: JSON.stringify({ message: lastUserMessage.content }),
+        signal: controller.signal,
       });
 
       if (!res.ok) {
@@ -155,9 +147,6 @@ const ChatBox = () => {
       const updatedMessages = [...currentMessages, botMessage];
       setMessages(updatedMessages);
       syncActiveChat(chatId, updatedMessages, chatTitle, false);
-
-      setFile(null);
-      setFileDescription("");
     } catch (error) {
       if (error.name !== "AbortError") {
         console.error("Error sending message:", error);
@@ -167,6 +156,69 @@ const ChatBox = () => {
         abortControllerRef.current = null;
       }
       setLoading(false);
+    }
+  };
+
+  // Автозапуск ответа бота для чата, созданного со страницы проекта
+  useEffect(() => {
+    if (
+      selectedChat &&
+      selectedChat.pendingBotReply &&
+      (selectedChat.messages || []).length > 0
+    ) {
+      const msgs = selectedChat.messages;
+      const title = selectedChat.title;
+      const chatId = selectedChat._id;
+
+      setChatPendingReply(chatId, false);
+      sendToBot(chatId, msgs, title);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChat?._id]);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (loading) return;
+    if (mode === "text" && !prompt.trim()) return;
+    if (mode === "photo" && !file) return;
+
+    try {
+      const chatId = selectedChat?._id || `chat-${Date.now()}`;
+      const chatTitle = prompt.trim().slice(0, 24) || "New chat";
+      const existingChat =
+        selectedChat || chats.find((chat) => chat._id === chatId) || null;
+      const existingMessages = existingChat?.messages || [];
+      const shouldSetInitialTitle =
+        existingMessages.length === 0 &&
+        (!existingChat?.title ||
+          existingChat.title === "New chat" ||
+          existingChat.title === "new chat");
+
+      if (shouldSetInitialTitle) {
+        syncActiveChat(chatId, [], chatTitle, true);
+      }
+
+      const newMessage = {
+        role: "user",
+        content:
+          mode === "text"
+            ? prompt
+            : `${t("chatbox.attachedFile")}: ${file.name}\n${fileDescription}`,
+        timestamp: new Date().toISOString(),
+      };
+
+      const currentMessages = [...existingMessages, newMessage];
+
+      setMessages(currentMessages);
+      syncActiveChat(chatId, currentMessages, chatTitle, false);
+      setPrompt("");
+
+      await sendToBot(chatId, currentMessages, chatTitle);
+
+      setFile(null);
+      setFileDescription("");
+    } catch (error) {
+      console.error("Error sending message:", error);
     }
   };
 
@@ -218,7 +270,6 @@ const ChatBox = () => {
 
         {mode === "photo" ? (
           <div className="flex items-center gap-2 w-full">
-            {/* Скрытый file input */}
             <input
               id="file-upload"
               type="file"
@@ -228,7 +279,6 @@ const ChatBox = () => {
               disabled={loading}
             />
 
-            {/* Кастомная кнопка */}
             <label
               htmlFor="file-upload"
               className={`cursor-pointer px-3 py-1.5 rounded-4xl border hover:opacity-80 text-[13px] text-white
@@ -237,7 +287,6 @@ const ChatBox = () => {
               {t("chatbox.chooseFile")}
             </label>
 
-            {/* Поле для описания файла */}
             <input
               type="text"
               value={fileDescription}
@@ -281,7 +330,9 @@ const ChatBox = () => {
             }`}
           >
             <span>{selectedModel || t("chatbox.model")}</span>
-            <span className={`text-xs transition-transform ${isModelOpen ? "rotate-180" : ""}`}>
+            <span
+              className={`text-xs transition-transform ${isModelOpen ? "rotate-180" : ""}`}
+            >
               ▾
             </span>
           </button>
@@ -323,7 +374,12 @@ const ChatBox = () => {
 
         <button
           type={loading ? "button" : "submit"}
-          disabled={loading ? false : (mode === "text" && !prompt.trim()) || (mode === "photo" && !file)}
+          disabled={
+            loading
+              ? false
+              : (mode === "text" && !prompt.trim()) ||
+                (mode === "photo" && !file)
+          }
           onClick={() => {
             if (loading) {
               handleStop();

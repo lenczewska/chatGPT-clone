@@ -21,9 +21,10 @@ const NewProjectChat = () => {
     chats,
     theme,
     selectedProject,
-    setSelectedChat,     // ✅ добавили — нужно для клика по чату в списке
+    setSelectedChat,     
     createNewChat,
     addMessageToChat,
+    setChatPendingReply, 
   } = useAppContext();
 
   const { t, i18n } = useTranslation();
@@ -56,6 +57,7 @@ const NewProjectChat = () => {
       setPrompt("");
       setFile(null);
       setFileDescription("");
+      setChatPendingReply(chat._id, true); 
 
       navigate("/");
     } catch (error) {

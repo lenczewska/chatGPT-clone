@@ -1,6 +1,5 @@
-import { createContext, use, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { dummyChats } from "../assets/assets";
 
 const AppContext = createContext();
@@ -17,6 +16,12 @@ const readStoredValue = (key, fallback) => {
   }
 };
 
+const deriveTitleFromMessage = (content, maxLen = 40) => {
+  if (!content) return "New chat";
+  const trimmed = content.trim();
+  return trimmed.length > maxLen ? trimmed.slice(0, maxLen) + "…" : trimmed;
+};
+
 export const AppContextProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -26,13 +31,14 @@ export const AppContextProvider = ({ children }) => {
   );
   const [projects, setProjects] = useState([]);
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [selectedProject, setSelectedProject] = useState(() =>
+    readStoredValue("fluxSelectedProject", null),
+  );
+
   const deleteChat = (chatId) => {
     setChats((prev) => prev.filter((chat) => chat._id !== chatId));
     setSelectedChat((prev) => (prev?._id === chatId ? null : prev));
   };
-  const [selectedProject, setSelectedProject] = useState(() =>
-    readStoredValue("fluxSelectedProject", null),
-  );
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -70,6 +76,7 @@ export const AppContextProvider = ({ children }) => {
     setChats(dummyChats);
     setSelectedChat();
   };
+
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -131,12 +138,6 @@ export const AppContextProvider = ({ children }) => {
     return newChat;
   };
 
-  const deriveTitleFromMessage = (content, maxLen = 40) => {
-    if (!content) return "New chat";
-    const trimmed = content.trim();
-    return trimmed.length > maxLen ? trimmed.slice(0, maxLen) + "…" : trimmed;
-  };
-
   const addMessageToChat = (chatId, message) => {
     setChats((prev) =>
       prev.map((chat) => {
@@ -161,6 +162,41 @@ export const AppContextProvider = ({ children }) => {
         };
       }),
     );
+
+    setSelectedChat((prev) => {
+      if (!prev || prev._id !== chatId) return prev;
+
+      const isFirstMessage = (prev.messages || []).length === 0;
+      const shouldUpdateTitle =
+        isFirstMessage &&
+        message.role === "user" &&
+        prev.title === "New chat";
+
+      const newTitle = shouldUpdateTitle
+        ? deriveTitleFromMessage(message.content)
+        : prev.title;
+
+      return {
+        ...prev,
+        title: newTitle,
+        name: newTitle,
+        messages: [...(prev.messages || []), message],
+        updatedAt: new Date().toISOString(),
+      };
+    });
+  };
+
+  const setChatPendingReply = (chatId, pending) => {
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat._id === chatId ? { ...chat, pendingBotReply: pending } : chat,
+      ),
+    );
+    setSelectedChat((prev) =>
+      prev && prev._id === chatId
+        ? { ...prev, pendingBotReply: pending }
+        : prev,
+    );
   };
 
   const value = {
@@ -180,6 +216,7 @@ export const AppContextProvider = ({ children }) => {
     createNewChat,
     deleteChat,
     addMessageToChat,
+    setChatPendingReply,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
