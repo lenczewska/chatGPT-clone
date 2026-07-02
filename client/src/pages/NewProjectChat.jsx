@@ -59,7 +59,7 @@ const NewProjectChat = () => {
       setFileDescription("");
       setChatPendingReply(chat._id, true); 
 
-      navigate("/");
+      navigate({ pathname: "/chatBox", search: `?t=${Date.now()}` });
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -166,7 +166,7 @@ const NewProjectChat = () => {
                 className="flex items-center justify-between rounded-xl border p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5"
                 onClick={() => {
                   setSelectedChat(chat);
-                  navigate("/");
+                  navigate({ pathname: "/chatBox", search: `?t=${Date.now()}` });
                 }}
               >
                 <span className="truncate">{chat.title || chat.name}</span>

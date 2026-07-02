@@ -38,6 +38,14 @@ const ChatBox = () => {
   useEffect(() => {
     if (selectedChat) {
       setMessages(selectedChat.messages || []);
+      setPrompt("");
+      setFile(null);
+      setFileDescription("");
+    } else {
+      setMessages([]);
+      setPrompt("");
+      setFile(null);
+      setFileDescription("");
     }
   }, [selectedChat]);
 

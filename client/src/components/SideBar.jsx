@@ -79,10 +79,18 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     setTheme(newTheme);
   };
 
-  const handleChatClick = (chat) => {
-    setSelectedChat(chat);
-    navigate("/");
+  const openChatBox = (chat = null) => {
+    if (chat) {
+      setSelectedChat(chat);
+    } else {
+      setSelectedChat(null);
+    }
+    navigate({ pathname: "/chatBox", search: `?t=${Date.now()}` });
     setIsMenuOpen(false);
+  };
+
+  const handleChatClick = (chat) => {
+    openChatBox(chat);
   };
 
   const starredProjects = projects.filter((p) => p.starred);
@@ -138,6 +146,10 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         <div className="flex items-center justify-between px-3 py-3 sm:px-2 sm:py-2">
           <Link
             to="/chatBox"
+            onClick={(e) => {
+              e.preventDefault();
+              openChatBox();
+            }}
             className="flex min-w-0 items-center group-data-[collapsible=icon]:hidden"
           >
             <img
@@ -180,11 +192,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                     <TooltipTrigger asChild>
                       <SidebarMenuButton
                         className="cursor-pointer"
-                        onClick={() => {
-                          createNewChat();
-                          navigate("/chatBox");
-                          setIsMenuOpen(false);
-                        }}
+                        onClick={() => openChatBox()}
                       >
                         <Plus />
                         {state === "expanded" && (

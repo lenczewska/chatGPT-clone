@@ -6,7 +6,7 @@ const Loading = () => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigate("/");
+      navigate({ pathname: "/chatBox", search: `?t=${Date.now()}` });
     }, 8000);
     return () => clearTimeout(timeout);
   }, []);
