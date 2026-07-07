@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import Sidebar from "./components/SideBar";
 import ChatBox from "./components/ChatBox";
@@ -12,11 +12,27 @@ import Loading from "./pages/Loading";
 import Login from "./pages/Login";
 
 function App() {
-  const { theme } = useAppContext();
+  const { theme, user } = useAppContext();
   const location = useLocation();
-  const { pathname, search } = location;
+  const navigate = useNavigate();
+  const { pathname } = location;
+
+  useEffect(() => {
+    if (pathname === "/loading") return;
+    if (!user && pathname !== "/login") {
+      navigate("/login", { replace: true });
+    }
+  }, [user, pathname, navigate]);
 
   if (pathname === "/loading") return <Loading />;
+
+  if (!user && pathname !== "/login") {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (pathname === "/login") {
+    return <Login />;
+  }
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
@@ -34,7 +50,6 @@ function App() {
                   path="/chatBox"
                   element={<ChatBox key={location.key} />}
                 />
-                <Route path="/login" element={<Login />} />
                 <Route path="/community" element={<Community />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/newProjectChat" element={<NewProjectChat />} />

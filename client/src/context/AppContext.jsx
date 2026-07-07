@@ -24,7 +24,15 @@ const deriveTitleFromMessage = (content, maxLen = 40) => {
 
 export const AppContextProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [authToken, setAuthToken] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("fluxAuthToken");
+  });
+  const [user, setUser] = useState(() => {
+    if (typeof window === "undefined") return null;
+    const storedUser = localStorage.getItem("fluxUser");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [chats, setChats] = useState(() => readStoredValue("fluxChats", []));
   const [selectedChat, setSelectedChat] = useState(() =>
     readStoredValue("fluxSelectedChat", null),
@@ -34,6 +42,8 @@ export const AppContextProvider = ({ children }) => {
   const [selectedProject, setSelectedProject] = useState(() =>
     readStoredValue("fluxSelectedProject", null),
   );
+
+  const isAuthenticated = Boolean(authToken && user);
 
   const deleteChat = (chatId) => {
     setChats((prev) => prev.filter((chat) => chat._id !== chatId));
@@ -69,12 +79,20 @@ export const AppContextProvider = ({ children }) => {
   }, [projects]);
 
   const fetchUser = async () => {
-    setUser();
+    if (typeof window === "undefined") return;
+
+    const storedToken = localStorage.getItem("fluxAuthToken");
+    const storedUser = localStorage.getItem("fluxUser");
+
+    setAuthToken(storedToken || null);
+    setUser(storedUser ? JSON.parse(storedUser) : null);
   };
 
   const fetchUserChats = async () => {
-    setChats(dummyChats);
-    setSelectedChat();
+    const storedChats = readStoredValue("fluxChats", []);
+    const storedSelectedChat = readStoredValue("fluxSelectedChat", null);
+    setChats(storedChats);
+    setSelectedChat(storedSelectedChat);
   };
 
   useEffect(() => {
@@ -87,15 +105,13 @@ export const AppContextProvider = ({ children }) => {
   }, [theme]);
 
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       fetchUserChats();
     } else {
-      const storedChats = readStoredValue("fluxChats", []);
-      const storedSelectedChat = readStoredValue("fluxSelectedChat", null);
-      setChats(storedChats);
-      setSelectedChat(storedSelectedChat);
+      setChats([]);
+      setSelectedChat(null);
     }
-  }, [user]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -116,6 +132,26 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (authToken) {
+        localStorage.setItem("fluxAuthToken", authToken);
+      } else {
+        localStorage.removeItem("fluxAuthToken");
+      }
+    }
+  }, [authToken]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (user) {
+        localStorage.setItem("fluxUser", JSON.stringify(user));
+      } else {
+        localStorage.removeItem("fluxUser");
+      }
+    }
+  }, [user]);
 
   const createNewChat = (projectId = null) => {
     const newChat = {
@@ -199,9 +235,24 @@ export const AppContextProvider = ({ children }) => {
     );
   };
 
+  const logout = () => {
+    setAuthToken(null);
+    setUser(null);
+    setChats([]);
+    setSelectedChat(null);
+    localStorage.removeItem("fluxAuthToken");
+    localStorage.removeItem("fluxUser");
+    localStorage.removeItem("fluxChats");
+    localStorage.removeItem("fluxSelectedChat");
+    navigate("/login");
+  };
+
   const value = {
     user,
     setUser,
+    authToken,
+    setAuthToken,
+    isAuthenticated,
     navigate,
     chats,
     setChats,
@@ -217,6 +268,7 @@ export const AppContextProvider = ({ children }) => {
     deleteChat,
     addMessageToChat,
     setChatPendingReply,
+    logout,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

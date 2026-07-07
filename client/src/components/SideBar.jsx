@@ -55,6 +55,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     deleteChat,
     setSelectedProject,
     createNewChat,
+    logout,
   } = useAppContext();
   const [activeMenu, setActiveMenu] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -453,7 +454,11 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
 
         <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
-          {filteredChats.length === 0 ? (
+          {!user ? (
+            <div className="rounded-md border border-dashed border-gray-300 px-3 py-4 text-center text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              Войдите, чтобы видеть чаты
+            </div>
+          ) : filteredChats.length === 0 ? (
             <div className="rounded-md border border-dashed border-gray-300 px-3 py-4 text-center text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
               {searchQuery ? "Ничего не найдено" : "Нет чатов"}
             </div>
@@ -533,7 +538,9 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
           style={{ borderColor: theme === "dark" ? undefined : "#E5E5E5" }}
         >
           <Avatar user={user} isDark={theme === "dark"} />
-          {state !== "collapsed" && <LogOut isDark={theme === "dark"} />}
+          {state !== "collapsed" && (
+            <LogOut isDark={theme === "dark"} onClick={logout} />
+          )}
         </div>
       </SidebarContent>
 

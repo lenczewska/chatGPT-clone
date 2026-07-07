@@ -1,8 +1,10 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { authClient } from "../../src/lib/auth-client";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [state, setState] = useState("login");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,58 +15,42 @@ const Login = () => {
     password: "",
   });
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  console.log("Отправка запроса...", formData); // DEBUG
+    try {
+      if (state === "login") {
+        const result = await authClient.signIn.email({
+          email: formData.email,
+          password: formData.password,
+        });
 
-  try {
-    if (state === "login") {
-      console.log("Попытка входа..."); // DEBUG
-      const result = await authClient.signIn.email({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      console.log("Результат входа:", result); // DEBUG
-
-      if (result.error) {
-        setError(result.error.message || "Ошибка входа");
+        if (result.error) {
+          setError(result.error.message || "Ошибка входа");
+        } else {
+          navigate("/chatBox");
+        }
       } else {
-        console.log("Успешный вход!", result.data);
-        window.location.href = "/";
-      }
-    } else {
-      console.log("Попытка регистрации..."); // DEBUG
-      const result = await authClient.signUp.email({
-        email: formData.email,
-        password: formData.password,
-        name: formData.name,
-      });
+        const result = await authClient.signUp.email({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+        });
 
-      console.log("Результат регистрации:", result); 
-
-      if (result.error) {
-        setError(result.error.message || "Ошибка регистрации");
-      } else {
-        console.log("Успешная регистрация!", result.data);
-        window.location.href = "/";
+        if (result.error) {
+          setError(result.error.message || "Ошибка регистрации");
+        } else {
+          navigate("/chatBox");
+        }
       }
+    } catch (err) {
+      setError(err.message || "Ошибка подключения к серверу");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Auth error:", err);
-    console.error("Error details:", {
-      message: err.message,
-      stack: err.stack,
-      name: err.name
-    });
-    setError(`Ошибка подключения к серверу. Проверьте, что сервер запущен на http://localhost:5000`);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
