@@ -433,12 +433,35 @@ svg {
   color: white;
 }
 
-.input {
+.input,
+.login-form .input,
+.login-form input {
   color: #0a0a0a;
+  background: transparent !important;
 }
 
-.dark .input {
+.login-form input:-webkit-autofill,
+.login-form input:-webkit-autofill:hover,
+.login-form input:-webkit-autofill:focus,
+.login-form input:-webkit-autofill:active,
+.login-form input:-webkit-autofill:read-only {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  box-shadow: 0 0 0px 1000px transparent inset !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+.login-form input:-webkit-autofill::first-line {
+  color: inherit !important;
+}
+
+.dark .input,
+.dark .login-form .input,
+.dark .login-form input {
   color: #ffffff;
+  background: transparent !important;
 }
 
 .dark .c-here {

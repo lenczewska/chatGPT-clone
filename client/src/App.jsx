@@ -17,7 +17,7 @@ function App() {
   const navigate = useNavigate();
   const { pathname } = location;
 
-  const publicPaths = ["/", "/chatBox", "/login"];
+  const publicPaths = ["/chatBox", "/login", "/newProjectChat"];
 
   useEffect(() => {
     if (pathname === "/loading") return;

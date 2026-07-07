@@ -56,6 +56,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     setSelectedProject,
     createNewChat,
     logout,
+    isAuthenticated,
   } = useAppContext();
   const [activeMenu, setActiveMenu] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -529,7 +530,17 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         >
           <Avatar user={user} isDark={theme === "dark"} />
           {state !== "collapsed" && (
-            <LogOut isDark={theme === "dark"} onClick={logout} />
+            <LogOut
+              isDark={theme === "dark"}
+              onClick={() => {
+                if (isAuthenticated) {
+                  logout();
+                } else {
+                  navigate("/login");
+                }
+              }}
+              label={isAuthenticated ? "Logout" : "Login"}
+            />
           )}
         </div>
       </SidebarContent>

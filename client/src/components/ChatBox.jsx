@@ -1,5 +1,6 @@
 import { useAppContext } from "@/context/AppContext";
 import React, { useEffect, useState, useRef, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import Message from "./Message";
 import Select from "./ui/select";
 import SendBtn from "./ui/sendBtn";
@@ -18,6 +19,7 @@ const ChatBox = () => {
     setChatPendingReply,
     isAuthenticated,
   } = useAppContext();
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const containerRef = useRef(null);
   const modelDropdownRef = useRef(null);
@@ -267,15 +269,15 @@ const ChatBox = () => {
         )}
       </div>
 
-      <form
-        onSubmit={onSubmit}
-        className={`mx-auto mt-2 flex w-full max-w-3xl items-center gap-2 rounded-full border p-2 sm:p-3 sm:pl-4 ${
-          theme === "dark"
-            ? "border-[#80609F]/50 bg-[#0f0f12] text-white"
-            : "border-black bg-white text-black"
-        } shadow-sm`}
-      >
-        <Select mode={mode} setMode={setMode} theme={theme} />
+        <form
+          onSubmit={onSubmit}
+          className={`mx-auto mt-2 flex w-full max-w-3xl items-center gap-2 rounded-full border p-2 sm:p-3 sm:pl-4 ${
+            theme === "dark"
+              ? "border-[#80609F]/50 bg-[#0f0f12] text-white"
+              : "border-black bg-white text-black"
+          } shadow-sm`}
+        >
+          <Select mode={mode} setMode={setMode} theme={theme} />
 
         {mode === "photo" ? (
           <div className="flex items-center gap-2 w-full">

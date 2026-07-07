@@ -23,10 +23,11 @@ const NewProjectChat = () => {
     chats,
     theme,
     selectedProject,
-    setSelectedChat,     
+    setSelectedChat,
     createNewChat,
     addMessageToChat,
-    setChatPendingReply, 
+    setChatPendingReply,
+    isAuthenticated,
   } = useAppContext();
 
   const { t, i18n } = useTranslation();
@@ -113,14 +114,14 @@ const NewProjectChat = () => {
         <h3 className="pl-1 text-2xl font-semibold">
           {selectedProject?.name || "Project name"}
         </h3>
-        <form
-          onSubmit={onSubmit}
-          className={`flex w-full max-w-3xl items-center gap-2 rounded-2xl border p-2 sm:p-3 sm:pl-4 ${
-            theme === "dark"
-              ? "border-[#80609F]/50 bg-[#0f0f12] text-white"
-              : "border-black bg-white text-black"
-          } shadow-sm`}
-        >
+          <form
+            onSubmit={onSubmit}
+            className={`flex w-full max-w-3xl items-center gap-2 rounded-2xl border p-2 sm:p-3 sm:pl-4 ${
+              theme === "dark"
+                ? "border-[#80609F]/50 bg-[#0f0f12] text-white"
+                : "border-black bg-white text-black"
+            } shadow-sm`}
+          >
           <Select mode={mode} setMode={setMode} theme={theme} />
 
           {mode === "photo" ? (
