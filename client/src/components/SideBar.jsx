@@ -455,10 +455,10 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
 
         <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
           {filteredChats.map((chat) => {
-              const chatTitle = chat.title || chat.name || "New chat";
-              const chatId = chat._id;
+            const chatTitle = chat.title || chat.name || "New chat";
+            const chatId = chat._id;
 
-              return (
+            return (
               <div
                 key={chatId}
                 onClick={() => handleChatClick(chat)}
@@ -477,7 +477,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                     className="ml-2 p-1 transition-colors shrink-0"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setActiveMenu(activeMenu === chatId ? null : chatId); // ✅ chatId
+                      setActiveMenu(activeMenu === chatId ? null : chatId);
                     }}
                   >
                     <HiOutlineDotsHorizontal
@@ -519,9 +519,8 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                   )}
                 </div>
               </div>
-              );
-            })
-          )}
+            );
+          })}
         </div>
 
         <div
