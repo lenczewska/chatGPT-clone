@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/ru";
 import "moment/locale/az";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 
 const ChatBox = () => {
   const {
@@ -16,6 +17,9 @@ const ChatBox = () => {
     setSelectedChat,
     chats,
     setChatPendingReply,
+    user,
+    isAuthenticated,
+    navigate,
   } = useAppContext();
   const { t, i18n } = useTranslation();
   const containerRef = useRef(null);
@@ -30,6 +34,20 @@ const ChatBox = () => {
   const [isPublished, setIsPublished] = useState(false);
   const [file, setFile] = useState(null);
   const [fileDescription, setFileDescription] = useState("");
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [guestRequestCount, setGuestRequestCount] = useState(() => {
+    if (typeof window === "undefined") return 0;
+
+    try {
+      const storedCount = localStorage.getItem("fluxGuestRequests");
+      return storedCount ? Number(storedCount) : 0;
+    } catch (error) {
+      console.error("Failed to read guest request count:", error);
+      return 0;
+    }
+  });
+
+  const GUEST_REQUEST_LIMIT = 5;
 
   useEffect(() => {
     moment.locale(i18n.language);
@@ -54,6 +72,21 @@ const ChatBox = () => {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("fluxGuestRequests", String(guestRequestCount));
+    }
+  }, [guestRequestCount]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setGuestRequestCount(0);
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("fluxGuestRequests");
+      }
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -190,6 +223,16 @@ const ChatBox = () => {
     if (mode === "text" && !prompt.trim()) return;
     if (mode === "photo" && !file) return;
 
+    if (!isAuthenticated) {
+      if (guestRequestCount >= GUEST_REQUEST_LIMIT) {
+        setShowAuthModal(true);
+        return;
+      }
+
+      const nextCount = guestRequestCount + 1;
+      setGuestRequestCount(nextCount);
+    }
+
     try {
       const chatId = selectedChat?._id || `chat-${Date.now()}`;
       const chatTitle = prompt.trim().slice(0, 24) || "New chat";
@@ -241,6 +284,14 @@ const ChatBox = () => {
         ref={containerRef}
         className="flex-1 min-h-0 overflow-y-auto px-1 pb-4 sm:px-2"
       >
+        {!isAuthenticated && (
+          <div className="mb-3 flex items-center justify-center rounded-full border border-dashed border-purple-300 bg-purple-50/80 px-3 py-1.5 text-xs text-purple-700 dark:border-purple-700 dark:bg-purple-950/30 dark:text-purple-300">
+            {guestRequestCount >= GUEST_REQUEST_LIMIT
+              ? "Лимит бесплатных запросов исчерпан"
+              : `Осталось ${GUEST_REQUEST_LIMIT - guestRequestCount} бесплатных запросов`}
+          </div>
+        )}
+
         {messages.length === 0 ? (
           <div className="flex h-full min-h-[50vh] flex-col items-center justify-center px-4 text-center">
             <p
@@ -265,6 +316,37 @@ const ChatBox = () => {
           </div>
         )}
       </div>
+
+      <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Нужно продолжить в аккаунте</DialogTitle>
+            <DialogDescription>
+              Вы использовали лимит из 5 бесплатных запросов. Авторизуйтесь,
+              чтобы продолжить общение без ограничений.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-end">
+            <button
+              type="button"
+              onClick={() => setShowAuthModal(false)}
+              className="rounded-full border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
+            >
+              Позже
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowAuthModal(false);
+                navigate("/login");
+              }}
+              className="rounded-full bg-black px-4 py-2 text-sm text-white hover:bg-gray-800 dark:bg-purple-600 dark:hover:bg-purple-500"
+            >
+              Авторизоваться
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <form
         onSubmit={onSubmit}

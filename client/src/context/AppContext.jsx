@@ -108,8 +108,10 @@ export const AppContextProvider = ({ children }) => {
     if (isAuthenticated) {
       fetchUserChats();
     } else {
-      setChats([]);
-      setSelectedChat(null);
+      const storedChats = readStoredValue("fluxChats", []);
+      const storedSelectedChat = readStoredValue("fluxSelectedChat", null);
+      setChats(storedChats);
+      setSelectedChat(storedSelectedChat);
     }
   }, [isAuthenticated]);
 

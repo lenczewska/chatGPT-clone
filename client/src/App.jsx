@@ -17,16 +17,18 @@ function App() {
   const navigate = useNavigate();
   const { pathname } = location;
 
+  const publicPaths = ["/", "/chatBox", "/login"];
+
   useEffect(() => {
     if (pathname === "/loading") return;
-    if (!user && pathname !== "/login") {
+    if (!user && !publicPaths.includes(pathname)) {
       navigate("/login", { replace: true });
     }
   }, [user, pathname, navigate]);
 
   if (pathname === "/loading") return <Loading />;
 
-  if (!user && pathname !== "/login") {
+  if (!user && !publicPaths.includes(pathname)) {
     return <Navigate to="/login" replace />;
   }
 
