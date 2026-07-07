@@ -34,6 +34,7 @@ import Switch from "./ui/switch";
 import LogOut from "./ui/logout";
 import Version from "./ui/version";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { getSearchScore, normalizeText } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/ru";
@@ -56,7 +57,7 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
     createNewChat,
   } = useAppContext();
   const [activeMenu, setActiveMenu] = useState(null);
-  const [search] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const { toggleSidebar, state } = useSidebar();
@@ -94,6 +95,39 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
   };
 
   const starredProjects = projects.filter((p) => p.starred);
+
+  const filteredChats = (() => {
+    const query = normalizeText(searchQuery);
+    if (!query) return chats;
+
+    return chats
+      .map((chat) => {
+        const chatTitle = normalizeText(chat.title || chat.name || "New chat");
+        const projectName = normalizeText(chat.projectName || "");
+        const messagesText = normalizeText(
+          (chat.messages || [])
+            .map((message) => message?.content || message?.text || "")
+            .join(" "),
+        );
+
+        const score = Math.max(
+          getSearchScore(chatTitle, query),
+          getSearchScore(projectName, query),
+          getSearchScore(messagesText, query),
+        );
+
+        return { chat, score };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (
+          new Date(b.chat.updatedAt || b.chat.createdAt) -
+          new Date(a.chat.updatedAt || a.chat.createdAt)
+        );
+      })
+      .map(({ chat }) => chat);
+  })();
 
   const handleToggleStar = (projectId) => {
     setProjects((prev) =>
@@ -254,7 +288,19 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                 </TooltipProvider>
               </SidebarMenuItem>
 
-              <SearchModal open={isSearchOpen} onOpenChange={setIsSearchOpen} />
+              <SearchModal
+                open={isSearchOpen}
+                onOpenChange={setIsSearchOpen}
+                value={searchQuery}
+                onSearch={setSearchQuery}
+                items={filteredChats}
+                onSelectItem={(chat) => {
+                  handleChatClick(chat);
+                  setSearchQuery("");
+                  setIsSearchOpen(false);
+                  setActiveMenu(null);
+                }}
+              />
 
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -407,11 +453,16 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
         </div>
 
         <div className="flex-1 overflow-y-scroll scrollbar-hide mt-3 text-sm space-y-3 ml-2 mr-2">
-          {chats.map((chat) => {
-            const chatTitle = chat.title || chat.name || "New chat";
-            const chatId = chat._id; // ✅ используем chatId вместо projectId
+          {filteredChats.length === 0 ? (
+            <div className="rounded-md border border-dashed border-gray-300 px-3 py-4 text-center text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              {searchQuery ? "Ничего не найдено" : "Нет чатов"}
+            </div>
+          ) : (
+            filteredChats.map((chat) => {
+              const chatTitle = chat.title || chat.name || "New chat";
+              const chatId = chat._id;
 
-            return (
+              return (
               <div
                 key={chatId}
                 onClick={() => handleChatClick(chat)}
@@ -472,8 +523,9 @@ const SideBar = ({ isMenuOpen, setIsMenuOpen }) => {
                   )}
                 </div>
               </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
 
         <div

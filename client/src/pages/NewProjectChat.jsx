@@ -5,6 +5,7 @@ import SendBtn from "../components/ui/sendBtn";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "@/context/AppContext";
 import { useState } from "react";
+import { getSearchScore, normalizeText } from "@/lib/utils";
 import { TfiArrowCircleLeft } from "react-icons/tfi";
 import { RxDotsHorizontal } from "react-icons/rx";
 
@@ -16,6 +17,7 @@ const NewProjectChat = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [file, setFile] = useState(null);
   const [fileDescription, setFileDescription] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     chats,
@@ -32,6 +34,34 @@ const NewProjectChat = () => {
 
   const projectId = selectedProject?._id || selectedProject?.id;
   const projectChats = chats.filter((c) => c.projectId === projectId);
+  const filteredProjectChats = (() => {
+    const query = normalizeText(searchQuery);
+    if (!query) return projectChats;
+
+    return projectChats
+      .map((chat) => {
+        const title = normalizeText(chat.title || chat.name || "");
+        const messagesText = normalizeText(
+          (chat.messages || []).map((message) => message?.content || "").join(" "),
+        );
+
+        const score = Math.max(
+          getSearchScore(title, query),
+          getSearchScore(messagesText, query),
+        );
+
+        return { chat, score };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (
+          new Date(b.chat.updatedAt || b.chat.createdAt) -
+          new Date(a.chat.updatedAt || a.chat.createdAt)
+        );
+      })
+      .map(({ chat }) => chat);
+  })();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -157,10 +187,20 @@ const NewProjectChat = () => {
           </button>
         </form>
         <div className="space-y-2 w-full max-w-3xl">
-          {projectChats.length === 0 ? (
-            <p className="text-sm text-gray-500">Нет чатов в этом проекте</p>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Поиск по чатам проекта"
+            className="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-gray-500 dark:border-gray-700 dark:placeholder:text-gray-400"
+          />
+
+          {filteredProjectChats.length === 0 ? (
+            <p className="text-sm text-gray-500">
+              {searchQuery ? "Ничего не найдено" : "Нет чатов в этом проекте"}
+            </p>
           ) : (
-            projectChats.map((chat) => (
+            filteredProjectChats.map((chat) => (
               <div
                 key={chat._id}
                 className="flex items-center justify-between rounded-xl border p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5"

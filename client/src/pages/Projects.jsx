@@ -8,6 +8,7 @@ import Plus from "../components/ui/plus";
 import NewProjectModal from "../components/NewProjectModal";
 import { useAppContext } from "@/context/AppContext";
 import { CiSearch } from "react-icons/ci";
+import { getSearchScore, normalizeText } from "@/lib/utils";
 
 const Projects = () => {
   const { t } = useTranslation();
@@ -15,12 +16,30 @@ const Projects = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [editingProject, setEditingProject] = useState(null);
 
   const handleAddProject = (project) => {
     const newProject = { ...project, starred: false };
     setProjects((prev) => [...prev, newProject]);
     setSelectedProject(newProject);
     navigate("/newProjectChat");
+  };
+
+  const handleEditProject = (projectId) => {
+    const projectToEdit = projects.find((project) => project.id === projectId);
+    if (projectToEdit) {
+      setEditingProject(projectToEdit);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleSaveEditedProject = (updatedProject) => {
+    setProjects((prev) =>
+      prev.map((project) =>
+        project.id === updatedProject.id ? { ...project, ...updatedProject } : project,
+      ),
+    );
+    setEditingProject(null);
   };
 
   const handleDeleteProject = (projectId) => {
@@ -35,11 +54,22 @@ const Projects = () => {
     );
   };
 
-  const filteredProjects = projects.filter(
-    (project) =>
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description?.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredProjects = (() => {
+    const query = normalizeText(searchQuery);
+    if (!query) return projects;
+
+    return projects
+      .map((project) => ({
+        project,
+        score: Math.max(
+          getSearchScore(project.name, query),
+          getSearchScore(project.description, query),
+        ),
+      }))
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ project }) => project);
+  })();
 
   const starredProjects = projects.filter((p) => p.starred);
 
@@ -78,7 +108,10 @@ const Projects = () => {
           backgroundColor: theme === "dark" ? "transparent" : "#f3f4f6",
           border: theme === "dark" ? "1px solid #4A3A6B" : "none",
         }}
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => {
+          setEditingProject(null);
+          setIsModalOpen(true);
+        }}
       >
         <Plus className="cursor-pointer" />
         <h2
@@ -93,6 +126,8 @@ const Projects = () => {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         onAdd={handleAddProject}
+        onEdit={handleSaveEditedProject}
+        initialProject={editingProject}
       />
 
       <div className="mt-4 sm:mt-6">
@@ -100,6 +135,7 @@ const Projects = () => {
           projects={filteredProjects}
           onDelete={handleDeleteProject}
           onToggleStar={toggleStar}
+          onEdit={handleEditProject}
         />
       </div>
     </div>
