@@ -97,7 +97,7 @@ const Login = () => {
               type="text"
               name="name"
               placeholder="Name"
-              className=" input w-full  placeholder-gray-500 dark:placeholder-gray-400 border-none outline-none ring-0"
+              className="input w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border-none outline-none ring-0"
               value={formData.name}
               onChange={handleChange}
               required
@@ -125,7 +125,7 @@ const Login = () => {
             type="email"
             name="email"
             placeholder="Email id"
-            className=" input w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border-none outline-none ring-0"
+            className="input w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border-none outline-none ring-0"
             value={formData.email}
             onChange={handleChange}
             required
@@ -152,7 +152,7 @@ const Login = () => {
             type="password"
             name="password"
             placeholder="Password"
-            className=" input w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border-none outline-none ring-0"
+            className="input w-full bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border-none outline-none ring-0"
             value={formData.password}
             onChange={handleChange}
             required
