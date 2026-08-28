@@ -436,32 +436,61 @@ svg {
 .input,
 .login-form .input,
 .login-form input {
-  color: #0a0a0a;
+  color: #111827 !important;
   background: transparent !important;
+  background-color: transparent !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  caret-color: #111827 !important;
+  font-family: inherit;
 }
 
 .login-form input:-webkit-autofill,
 .login-form input:-webkit-autofill:hover,
 .login-form input:-webkit-autofill:focus,
 .login-form input:-webkit-autofill:active,
-.login-form input:-webkit-autofill:read-only {
-  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
-  box-shadow: 0 0 0px 1000px transparent inset !important;
+.login-form input:-webkit-autofill:read-only,
+.login-form input:-internal-autofill-selected {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  box-shadow: 0 0 0 1000px transparent inset !important;
   background-color: transparent !important;
   background-image: none !important;
-  color: inherit !important;
-  -webkit-text-fill-color: inherit !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  caret-color: #111827 !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 .login-form input:-webkit-autofill::first-line {
-  color: inherit !important;
+  color: #111827 !important;
 }
 
 .dark .input,
 .dark .login-form .input,
 .dark .login-form input {
-  color: #ffffff;
+  color: #ffffff !important;
   background: transparent !important;
+  background-color: transparent !important;
+  caret-color: #ffffff !important;
+}
+
+.login-form input::selection {
+  background: rgba(148, 163, 184, 0.35);
+}
+
+.dark .login-form input:-webkit-autofill,
+.dark .login-form input:-webkit-autofill:hover,
+.dark .login-form input:-webkit-autofill:focus,
+.dark .login-form input:-webkit-autofill:active,
+.dark .login-form input:-webkit-autofill:read-only,
+.dark .login-form input:-internal-autofill-selected {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+}
+
+.dark .login-form input:-webkit-autofill::first-line {
+  color: #ffffff !important;
 }
 
 .dark .c-here {

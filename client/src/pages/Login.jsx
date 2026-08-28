@@ -26,6 +26,12 @@ const Login = () => {
     setLoading(true);
 
     if (forgotPassword) {
+      if (!formData.email) {
+        setError("Введите email для сброса пароля");
+        setLoading(false);
+        return;
+      }
+
       if (!formData.newPassword || !formData.confirmPassword) {
         setError("Введите новый пароль и подтвердите его");
         setLoading(false);
@@ -38,16 +44,37 @@ const Login = () => {
         return;
       }
 
-      setSuccessMessage("Пароль успешно обновлён. Пожалуйста, войдите снова.");
-      setForgotPassword(false);
-      setFormData((prev) => ({
-        ...prev,
-        password: "",
-        newPassword: "",
-        confirmPassword: "",
-      }));
-      setState("login");
-      setLoading(false);
+      try {
+        const result = await authClient.resetPassword({
+          email: formData.email,
+          password: formData.newPassword,
+        });
+
+        if (result.error) {
+          setError(result.error.message || "Не удалось обновить пароль");
+          setLoading(false);
+          return;
+        }
+
+        setSuccessMessage("Пароль успешно обновлён. Пожалуйста, войдите снова.");
+        setForgotPassword(false);
+        setFormData((prev) => ({
+          ...prev,
+          email: "",
+          password: "",
+          name: "",
+          newPassword: "",
+          confirmPassword: "",
+        }));
+        setState("login");
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 2500);
+      } catch (err) {
+        setError(err.message || "Ошибка сброса пароля");
+      } finally {
+        setLoading(false);
+      }
       return;
     }
 
